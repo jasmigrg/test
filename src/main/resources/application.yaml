@@ -1,0 +1,16 @@
+server:
+  port: 8080
+
+spring:
+  freemarker:
+    enabled: true
+    template-loader-path: classpath:/templates/
+    suffix: .ftl
+    cache: false
+    charset: UTF-8
+
+logging:
+  level:
+    root: INFO
+    org.example: DEBUG
+    org.springframework.web: DEBUG

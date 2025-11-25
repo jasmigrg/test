@@ -1,0 +1,47 @@
+// Main initialization file - Loads all modules and initializes on page load
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('override-browse.js loaded');
+
+    // Initialize GridManager
+    if (typeof GridManager !== 'undefined') {
+        GridManager.initDropdowns();
+        GridManager.initColumnToggle();
+        GridManager.initColumnSearch();
+    } else {
+        console.error('GridManager not found!');
+    }
+
+    // Initialize row selection (from row-selection.js)
+    if (typeof initRowSelection !== 'undefined') {
+        initRowSelection();
+    }
+
+    // Add event listener for preference type selection
+    const preferenceTypeRadios = document.querySelectorAll('input[name="preferenceType"]');
+    preferenceTypeRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            const customInput = document.getElementById('customPreferenceName');
+            const suggestedSelect = document.getElementById('suggestedPreferenceSelect');
+            customInput.disabled = e.target.value !== 'custom';
+            suggestedSelect.disabled = e.target.value !== 'suggested';
+        });
+    });
+
+    // Handle modal closing by clicking outside
+    const modals = [
+        { id: 'preferenceModal', close: () => GridManager?.closePreferenceModal?.() },
+        { id: 'successModal', close: () => GridManager?.closeSuccessModal?.() },
+        { id: 'appliedSuccessModal', close: () => GridManager?.closeAppliedSuccessModal?.() }
+    ];
+
+    modals.forEach(({ id, close }) => {
+        const modal = document.getElementById(id);
+        if (modal) {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) close();
+            });
+        }
+    });
+});
