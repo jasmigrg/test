@@ -86,7 +86,6 @@ body {
 
 .user-chip {
     display: flex;
-    align-items: center;
     gap: 12px;
 }
 
@@ -303,29 +302,6 @@ body {
 }
 
 .btn-cancel {
-    background-color: #007c91;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 124, 145, 0.15);
-}
-
-.btn-cancel:hover {
-    background-color: #006a7a;
-    box-shadow: 0 4px 12px rgba(0, 124, 145, 0.25);
-}
-
-.btn-cancel:active {
-    transform: translateY(1px);
-    box-shadow: 0 1px 4px rgba(0, 124, 145, 0.15);
-}
-
-.btn-save-preference {
     background-color: white;
     color: #007c91;
     padding: 10px 20px;
@@ -338,14 +314,37 @@ body {
     box-shadow: 0 2px 8px rgba(0, 124, 145, 0.1);
 }
 
-.btn-save-preference:hover {
+.btn-cancel:hover {
     background-color: #f0f8f9;
     box-shadow: 0 4px 12px rgba(0, 124, 145, 0.2);
 }
 
-.btn-save-preference:active {
+.btn-cancel:active {
     transform: translateY(1px);
     box-shadow: 0 1px 4px rgba(0, 124, 145, 0.1);
+}
+
+.btn-save-preference {
+    background-color: #007c91;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 124, 145, 0.15);
+}
+
+.btn-save-preference:hover {
+    background-color: #006a7a;
+    box-shadow: 0 4px 12px rgba(0, 124, 145, 0.25);
+}
+
+.btn-save-preference:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 4px rgba(0, 124, 145, 0.15);
 }
 
 /* Grid Manager Section */
@@ -750,6 +749,43 @@ body {
     margin-left: 30px;
 }
 
+.preference-suggestions {
+    margin-bottom: 12px;
+}
+
+.preference-suggestions span {
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+    display: inline;
+    margin-right: 8px;
+}
+
+.suggestion-list {
+    display: inline-flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.suggestion-link {
+    color: #007c91;
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 13px;
+    padding: 2px 4px;
+    transition: all 0.2s;
+    font-weight: 500;
+}
+
+.suggestion-link:hover {
+    color: #006a7a;
+    text-decoration-thickness: 2px;
+}
+
+.suggestion-link:active {
+    opacity: 0.8;
+}
+
 .preference-select,
 .preference-input {
     width: 100%;
@@ -758,6 +794,7 @@ body {
     border-radius: 4px;
     font-size: 14px;
     font-family: inherit;
+    margin-top: 8px;
 }
 
 .preference-select:focus,
@@ -782,30 +819,7 @@ body {
     background-color: #fafafa;
 }
 
-.btn-cancel {
-    background-color: #007c91;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(0, 124, 145, 0.15);
-}
-
-.btn-cancel:hover {
-    background-color: #006a7a;
-    box-shadow: 0 4px 12px rgba(0, 124, 145, 0.25);
-}
-
-.btn-cancel:active {
-    transform: translateY(1px);
-    box-shadow: 0 1px 4px rgba(0, 124, 145, 0.15);
-}
-
-.btn-save-preference {
+.preference-modal-footer .btn-cancel {
     background-color: white;
     color: #007c91;
     padding: 10px 20px;
@@ -816,16 +830,41 @@ body {
     font-weight: 500;
     transition: all 0.3s ease;
     box-shadow: 0 2px 8px rgba(0, 124, 145, 0.1);
+    display: inline-block;
 }
 
-.btn-save-preference:hover {
+.preference-modal-footer .btn-cancel:hover {
     background-color: #f0f8f9;
     box-shadow: 0 4px 12px rgba(0, 124, 145, 0.2);
 }
 
-.btn-save-preference:active {
+.preference-modal-footer .btn-cancel:active {
     transform: translateY(1px);
     box-shadow: 0 1px 4px rgba(0, 124, 145, 0.1);
+}
+
+.preference-modal-footer .btn-save-preference {
+    background-color: #007c91;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 124, 145, 0.15);
+    display: inline-block;
+}
+
+.preference-modal-footer .btn-save-preference:hover {
+    background-color: #006a7a;
+    box-shadow: 0 4px 12px rgba(0, 124, 145, 0.25);
+}
+
+.preference-modal-footer .btn-save-preference:active {
+    transform: translateY(1px);
+    box-shadow: 0 1px 4px rgba(0, 124, 145, 0.15);
 }
 
 /* Toast Notification */
@@ -964,7 +1003,8 @@ body {
 .success-icon {
     width: 60px;
     height: 60px;
-    background-color: #e8f5e9;
+    background-color: white;
+    border: 3px solid #388e3c;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -988,7 +1028,7 @@ body {
 }
 
 .success-modal-button {
-    background-color: #388e3c;
+    background-color: #007c91;
     color: white;
     padding: 10px 24px;
     border: none;
@@ -997,12 +1037,12 @@ body {
     font-size: 14px;
     font-weight: 500;
     transition: all 0.3s ease;
-    box-shadow: 0 2px 8px rgba(56, 142, 60, 0.15);
+    box-shadow: 0 2px 8px rgba(0, 124, 145, 0.15);
 }
 
 .success-modal-button:hover {
-    background-color: #2e7d32;
-    box-shadow: 0 4px 12px rgba(56, 142, 60, 0.25);
+    background-color: #006a7a;
+    box-shadow: 0 4px 12px rgba(0, 124, 145, 0.25);
 }
 
 @keyframes slideUp {

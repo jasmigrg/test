@@ -44,4 +44,15 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
     });
+
+    // Update suggestion names on modal open
+    const preferenceModal = document.getElementById('preferenceModal');
+    if (preferenceModal) {
+        const observer = new MutationObserver(() => {
+            if (preferenceModal.classList.contains('show')) {
+                GridManager.updateSuggestionNames();
+            }
+        });
+        observer.observe(preferenceModal, { attributes: true });
+    }
 });

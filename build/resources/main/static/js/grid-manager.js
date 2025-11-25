@@ -233,17 +233,38 @@ const GridManager = {
         if (modal) {
             modal.classList.add('show');
             // Reset form
-            document.getElementById('suggestedPreferenceSelect').value = '';
+            document.getElementById('suggestedPreferenceName').value = '';
             document.getElementById('customPreferenceName').value = '';
             document.querySelector('input[name="preferenceType"][value="suggested"]').checked = true;
             document.getElementById('customPreferenceName').disabled = true;
+            
+            // Update suggestion names
+            this.updateSuggestionNames();
         }
-    },
+   },
 
-    openPreferenceModal() {
-        const modal = document.getElementById('preferenceModal');
-        if (modal) {
-            modal.classList.add('show');
+    updateSuggestionNames() {
+        // Get all used preference names
+        const usedNames = Object.values(this.savedPreferences).map(p => p.name.toLowerCase());
+        
+        // Generate suggestion names, skipping used ones
+        const suggestions = [];
+        let counter = 1;
+        
+        while (suggestions.length < 3) {
+            const name = `Preference ${counter}`;
+            if (!usedNames.includes(name.toLowerCase())) {
+                suggestions.push({ name, value: `preference-${counter}` });
+            }
+            counter++;
+        }
+
+        // Update suggestion links
+        const suggestionList = document.querySelector('.suggestion-list');
+        if (suggestionList) {
+            suggestionList.innerHTML = suggestions.map(s => 
+                `<a href="#" class="suggestion-link" onclick="document.getElementById('suggestedPreferenceName').value='${s.name}'; event.preventDefault();">${s.name}</a>`
+            ).join('');
         }
     },
 
@@ -259,12 +280,13 @@ const GridManager = {
         let preferenceName = '';
 
         if (preferenceType === 'suggested') {
-            const select = document.getElementById('suggestedPreferenceSelect');
-            if (!select.value) {
-                this.showToast('Please select a preference name', 'error');
+            const suggestedInput = document.getElementById('suggestedPreferenceName');
+            const suggestedValue = suggestedInput.value.trim();
+            if (!suggestedValue) {
+                this.showToast('Please select a suggested preference name', 'error');
                 return;
             }
-            preferenceName = select.options[select.selectedIndex].text;
+            preferenceName = suggestedValue;
         } else {
             const customName = document.getElementById('customPreferenceName').value.trim();
             if (!customName) {
@@ -304,8 +326,8 @@ const GridManager = {
         // Close the preference modal
         this.closePreferenceModal();
 
-        // Show success toast with preference name
-        this.showToast(`Preference "${preferenceName}" saved successfully!`, 'success');
+        // Show success modal with preference name
+        this.showSuccessModal(preferenceName);
     },
 
     showSuccessModal(preferenceName) {
@@ -537,7 +559,7 @@ const GridManager = {
     },
 
     showToast(message, type = 'error', duration = 3000) {
-        console.log('Showing toast:', message, type); // Debug log
+        console.log('Showing toast:', message, type);
         
         // Create toast container if it doesn't exist
         let container = document.getElementById('toastContainer');
@@ -573,5 +595,5 @@ const GridManager = {
                 toast.remove();
             }, 300);
         }, duration);
-    },
+    }
 };

@@ -86,6 +86,9 @@
                         <button class="btn primary" type="button" onclick="exportOverrides()">
                             <i class="fas fa-file-export btn-icon"></i>Export
                         </button>
+                        <button class="btn primary" type="button" onclick="saveOverrides()">
+                            <i class="fas fa-save btn-icon"></i>Save
+                        </button>
                     </div>
                 </section>
 
@@ -105,127 +108,127 @@
                                     <div class="gm-menu-body">
                                         <label class="gm-menu-item">
                                             <input type="checkbox" id="columnsAll" data-column-key="ALL" />
-                                            All
+                                            <span>All</span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="uniqueId">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="uniqueId" checked>
                                             <span>Unique ID</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="overrideLevel">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="overrideLevel" checked>
                                             <span>Override Level</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="effectiveDate">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="effectiveDate" checked>
                                             <span>Effective Date</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="terminationDate">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="terminationDate" checked>
                                             <span>Termination Date</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="customerSegment">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="customerSegment" checked>
                                             <span>Customer Segment</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="customerMarket">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="customerMarket" checked>
                                             <span>Customer Market</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="customerCluster">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="customerCluster" checked>
                                             <span>Customer Cluster</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="itemNumber">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="itemNumber" checked>
                                             <span>Item #</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="productSubCategory">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="productSubCategory" checked>
                                             <span>Product Sub Category</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="baseMargin">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="baseMargin" checked>
                                             <span>Base Margin</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="targetMargin">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="targetMargin" checked>
                                             <span>Target Margin</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="premiumMargin">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="premiumMargin" checked>
                                             <span>Premium Margin</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="baseCost">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="baseCost" checked>
                                             <span>Base Cost</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="targetCost">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="targetCost" checked>
                                             <span>Target Cost</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="basePrice">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="basePrice" checked>
                                             <span>Base Price</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="targetPrice">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="targetPrice" checked>
                                             <span>Target Price</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="premiumPrice">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="premiumPrice" checked>
                                             <span>Premium Price</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="uom">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="uom" checked>
                                             <span>Unit of Measure</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="reasonCode">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="reasonCode" checked>
                                             <span>Reason Code</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="notes">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="notes" checked>
                                             <span>Notes</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="programId">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="programId" checked>
                                             <span>Program ID</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="userId">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="userId" checked>
                                             <span>User ID</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="dateUpdated">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="dateUpdated" checked>
                                             <span>Date Updated</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                         <label class="gm-menu-item" draggable="true" data-column-key="timeUpdated">
-                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                             <input type="checkbox" data-column-key="timeUpdated" checked>
                                             <span>Time Updated</span>
+                                            <span class="drag-handle"><i class="fas fa-grip-vertical"></i></span>
                                         </label>
                                     </div>
                                     <div class="gm-menu-footer">
@@ -428,17 +431,18 @@
                 <div class="preference-option">
                     <label class="preference-option-label">
                         <input type="radio" name="preferenceType" value="suggested" checked/>
-                        <span>Suggested Names</span>
+                        <span>Save with suggested name</span>
                     </label>
                     <div class="preference-option-content">
-                        <select id="suggestedPreferenceSelect" class="preference-select">
-                            <option value="">-- Select a suggested name --</option>
-                            <option value="preference-1">Preference 1</option>
-                            <option value="preference-2">Preference 2</option>
-                            <option value="preference-3">Preference 3</option>
-                            <option value="preference-4">Preference 4</option>
-                            <option value="preference-5">Preference 5</option>
-                        </select>
+                        <div class="preference-suggestions">
+                            <span>Suggestions:</span>
+                            <div class="suggestion-list">
+                                <a href="#" class="suggestion-link" onclick="document.getElementById('suggestedPreferenceName').value='Preference 1'; event.preventDefault();">Preference 1</a>
+                                <a href="#" class="suggestion-link" onclick="document.getElementById('suggestedPreferenceName').value='Preference 2'; event.preventDefault();">Preference 2</a>
+                                <a href="#" class="suggestion-link" onclick="document.getElementById('suggestedPreferenceName').value='Preference 3'; event.preventDefault();">Preference 3</a>
+                            </div>
+                        </div>
+                        <input type="text" id="suggestedPreferenceName" class="preference-input" placeholder="Selected preference name will appear here" readonly/>
                     </div>
                 </div>
 
@@ -446,7 +450,7 @@
                 <div class="preference-option">
                     <label class="preference-option-label">
                         <input type="radio" name="preferenceType" value="custom"/>
-                        <span>Custom Name</span>
+                        <span>Save custom name</span>
                     </label>
                     <div class="preference-option-content">
                         <input type="text" id="customPreferenceName" class="preference-input" placeholder="Enter custom preference name" disabled/>

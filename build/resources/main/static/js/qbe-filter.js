@@ -1,4 +1,4 @@
-// QBE (Query By Example) filtering for effective date and override level
+// QBE (Query By Example) - Build parameters and submit to backend
 
 const QBEFilter = {
     initQBEFiltering() {
@@ -45,61 +45,6 @@ const QBEFilter = {
 
         // Redirect to clear filters
         window.location.href = '/overrides';
-    },
-
-    // Client-side filtering helper (for reference, uses backend filters)
-    matchesNumericFilter(value, filter) {
-        try {
-            if (filter.startsWith('>=')) {
-                const num = parseInt(filter.substring(2));
-                return value >= num;
-            } else if (filter.startsWith('<=')) {
-                const num = parseInt(filter.substring(2));
-                return value <= num;
-            } else if (filter.startsWith('>')) {
-                const num = parseInt(filter.substring(1));
-                return value > num;
-            } else if (filter.startsWith('<')) {
-                const num = parseInt(filter.substring(1));
-                return value < num;
-            } else if (filter.startsWith('=')) {
-                const num = parseInt(filter.substring(1));
-                return value === num;
-            } else {
-                const num = parseInt(filter);
-                return value === num;
-            }
-        } catch (e) {
-            return false;
-        }
-    },
-
-    matchesDateFilter(displayDate, filterInput) {
-        try {
-            // displayDate format: MM/dd/yyyy (from Freemarker formatting)
-            // filterInput format: yyyy-MM-dd (from HTML date input)
-            const parts = displayDate.split('/');
-            if (parts.length !== 3) return false;
-            const displayDateISO = `${parts[2]}-${parts[0]}-${parts[1]}`;
-            
-            if (filterInput.startsWith('>=')) {
-                const filterDate = filterInput.substring(2);
-                return displayDateISO >= filterDate;
-            } else if (filterInput.startsWith('<=')) {
-                const filterDate = filterInput.substring(2);
-                return displayDateISO <= filterDate;
-            } else if (filterInput.startsWith('>')) {
-                const filterDate = filterInput.substring(1);
-                return displayDateISO > filterDate;
-            } else if (filterInput.startsWith('<')) {
-                const filterDate = filterInput.substring(1);
-                return displayDateISO < filterDate;
-            } else {
-                return displayDateISO === filterInput;
-            }
-        } catch (e) {
-            return false;
-        }
     }
 };
 
