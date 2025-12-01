@@ -248,45 +248,45 @@ const PaginationManager = {
         // Go to first page
         if (this.currentPage > 0) {
             html += `<button class="pagination-icon-btn" onclick="PaginationManager.goToFirstPage()" title="First Page">
-                <i class="fas fa-angle-double-left"></i>
+                ⟨⟨
             </button>`;
          } else {
             html += `<button class="pagination-icon-btn" disabled title="First Page">
-                <i class="fas fa-angle-double-left"></i>
+                ⟨⟨
             </button>`;
         }
         
         // Previous page
         if (this.currentPage > 0) {
             html += `<button class="pagination-icon-btn" onclick="PaginationManager.previousPage()" title="Previous Page">
-                <i class="fas fa-angle-left"></i>
-        </button>`;
+                ⟨
+            </button>`;
         } else {
             html += `<button class="pagination-icon-btn" disabled title="Previous Page">
-                <i class="fas fa-angle-left"></i>
-        </button>`;
+                ⟨
+            </button>`;
         }
         
         // Next page
         if (this.currentPage < this.totalPages - 1) {
             html += `<button class="pagination-icon-btn" onclick="PaginationManager.nextPage()" title="Next Page">
-                <i class="fas fa-angle-right"></i>
-        </button>`;
+                ⟩
+            </button>`;
         } else {
             html += `<button class="pagination-icon-btn" disabled title="Next Page">
-                <i class="fas fa-angle-right"></i>
-        </button>`;
+                ⟩
+            </button>`;
         }
 
         
         // Go to last page
         if (this.currentPage < this.totalPages - 1) {
             html += `<button class="pagination-icon-btn" onclick="PaginationManager.goToLastPage()" title="Last Page">
-                <i class="fas fa-angle-double-right"></i>
+                ⟩⟩
             </button>`;
         } else {
             html += `<button class="pagination-icon-btn" disabled title="Last Page">
-                <i class="fas fa-angle-double-right"></i>
+                ⟩⟩
             </button>`;
         }
         
