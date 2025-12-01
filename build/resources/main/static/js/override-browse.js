@@ -24,8 +24,16 @@ document.addEventListener('DOMContentLoaded', () => {
         radio.addEventListener('change', (e) => {
             const customInput = document.getElementById('customPreferenceName');
             const suggestedSelect = document.getElementById('suggestedPreferenceSelect');
-            customInput.disabled = e.target.value !== 'custom';
-            suggestedSelect.disabled = e.target.value !== 'suggested';
+
+            // Safely update custom input if it exists
+            if (customInput) {
+                customInput.disabled = e.target.value !== 'custom';
+            }
+
+            // Safely update suggested select if it exists
+            if (suggestedSelect) {
+                suggestedSelect.disabled = e.target.value !== 'suggested';
+            }
         });
     });
 

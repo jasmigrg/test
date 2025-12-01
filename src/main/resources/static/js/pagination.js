@@ -18,7 +18,7 @@ const PaginationManager = {
     
     // Load mock data from backend API
     loadDataFromAPI() {
-        const apiUrl = `/api/v1/guidance-engine/override?size=${this.pageSize}&page=${this.currentPage}&sort=${this.sortColumn}&direction=${this.sortDirection}`;
+        const apiUrl = `/api/v1/guidance-engine/override?size=${this.pageSize}&page=${this.currentPage}&sort=${this.sortColumn || ''}&direction=${this.sortDirection || ''}`;
         
         fetch(apiUrl)
             .then(response => {
@@ -101,7 +101,14 @@ const PaginationManager = {
     
     // Attach click listeners to column headers for sorting
     attachSortListeners() {
-        const headers = document.querySelectorAll('th[data-column-key]');
+        // Only select headers from the main header row, not the QBE row
+        const headerRow = document.querySelector('thead tr.header-row');
+        if (!headerRow) {
+            console.warn('Header row not found');
+            return;
+        }
+
+        const headers = headerRow.querySelectorAll('th[data-column-key]');
         headers.forEach(header => {
             const columnKey = header.dataset.columnKey;
             if (columnKey && columnKey !== 'ALL') {
@@ -112,7 +119,7 @@ const PaginationManager = {
             }
         });
     },
-    
+
     // Handle column sort
     handleSort(columnKey) {
         if (this.sortColumn === columnKey) {
@@ -123,20 +130,30 @@ const PaginationManager = {
             this.sortColumn = columnKey;
             this.sortDirection = 'ASC';
         }
-        this.currentPage = 0; // Reset to first page
-        this.loadDataFromAPI();
-        console.log(`Sorting by ${columnKey} - ${this.sortDirection}`);
+        
+        // Reset to first page
+        this.currentPage = 0;
+        
+        // Update visual indicators
         this.updateSortIndicators(columnKey);
+        
+        // Load sorted data from API
+        this.loadDataFromAPI();
+        
+        console.log(`Sorting by ${columnKey} - ${this.sortDirection}`);
     },
-    
+
     // Update sort indicators on column headers
     updateSortIndicators(columnKey) {
-        const headers = document.querySelectorAll('th[data-column-key]');
+        const headerRow = document.querySelector('thead tr.header-row');
+        if (!headerRow) return;
+        
+        const headers = headerRow.querySelectorAll('th[data-column-key]');
         headers.forEach(header => {
             header.classList.remove('sort-asc', 'sort-desc');
         });
         
-        const activeHeader = document.querySelector(`th[data-column-key="${columnKey}"]`);
+        const activeHeader = headerRow.querySelector(`th[data-column-key="${columnKey}"]`);
         if (activeHeader) {
             activeHeader.classList.add(this.sortDirection === 'ASC' ? 'sort-asc' : 'sort-desc');
         }
@@ -167,40 +184,40 @@ const PaginationManager = {
             
             tr.innerHTML = `
                 <td class="checkbox-col">
-                    <input type="checkbox" class="row-checkbox" name="selectedIds" value="${row.uniqueId}">
+                    <input type="checkbox" class="row-checkbox" name="selectedIds" value="${row.id}">
                 </td>
-                <td data-column-key="uniqueId">${row.uniqueId || ''}</td>
+                <td data-column-key="uniqueId">${row.id || ''}</td>
                 <td data-column-key="overrideLevel">${row.overrideLevel || ''}</td>
                 <td data-column-key="effectiveDate">${formatDate(row.effectiveDate)}</td>
                 <td data-column-key="terminationDate">${formatDate(row.terminationDate)}</td>
                 <td data-column-key="customerSegment">${row.customerSegment || ''}</td>
                 <td data-column-key="customerMarket">${row.customerMarket || ''}</td>
                 <td data-column-key="customerCluster">${row.customerCluster || ''}</td>
-                <td data-column-key="itemNumber">${row.itemNum || ''}</td>
+                <td data-column-key="itemNumber">${row.itemNumber || ''}</td>
                 <td data-column-key="productSubCategory">${row.productSubCategory || ''}</td>
-                <td data-column-key="baseMargin">${row.baseMargin ? row.baseMargin + '%' : ''}</td>
-                <td data-column-key="targetMargin">${row.targetMargin ? row.targetMargin + '%' : ''}</td>
-                <td data-column-key="premiumMargin">${row.premiumMargin ? row.premiumMargin + '%' : ''}</td>
-                <td data-column-key="baseCost">${row.baseCost || ''}</td>
-                <td data-column-key="targetCost">${row.targetCost || ''}</td>
-                <td data-column-key="basePrice">${row.basePrice || ''}</td>
-                <td data-column-key="targetPrice">${row.targetPrice || ''}</td>
-                <td data-column-key="premiumPrice">${row.premiumPrice || ''}</td>
-                <td data-column-key="uom">${row.unitOfMeasure || ''}</td>
+                <td data-column-key="baseMargin">${row.baseMargin ? (row.baseMargin * 100).toFixed(1) + '%' : ''}</td>
+                <td data-column-key="targetMargin">${row.targetMargin ? (row.targetMargin * 100).toFixed(1) + '%' : ''}</td>
+                <td data-column-key="premiumMargin">${row.premiumMargin ? (row.premiumMargin * 100).toFixed(1) + '%' : ''}</td>
+                <td data-column-key="baseCost">${row.baseCost ? row.baseCost.toFixed(2) : ''}</td>
+                <td data-column-key="targetCost">${row.targetCost ? row.targetCost.toFixed(2) : ''}</td>
+                <td data-column-key="basePrice">${row.basePrice ? row.basePrice.toFixed(2) : ''}</td>
+                <td data-column-key="targetPrice">${row.targetPrice ? row.targetPrice.toFixed(2) : ''}</td>
+                <td data-column-key="premiumPrice">${row.premiumPrice ? row.premiumPrice.toFixed(2) : ''}</td>
+                <td data-column-key="uom">${row.uom || ''}</td>
                 <td data-column-key="reasonCode">${row.reasonCode || ''}</td>
                 <td data-column-key="notes">${row.notes || ''}</td>
                 <td data-column-key="programId">${row.programId || ''}</td>
                 <td data-column-key="userId">${row.userId || ''}</td>
-                <td data-column-key="dateUpdated">${row.dateUpdated || ''}</td>
+                <td data-column-key="dateUpdated">${formatDate(row.dateUpdated)}</td>
                 <td data-column-key="timeUpdated">${row.timeUpdated || ''}</td>
                 <td class="actions-col">
-                    <button class="action-btn view-btn" onclick="alert('View record ${row.uniqueId}')" title="View">
+                    <button class="action-btn view-btn" onclick="alert('View record ${row.id}')" title="View">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button class="action-btn edit-btn" onclick="alert('Edit record ${row.uniqueId}')" title="Edit">
+                    <button class="action-btn edit-btn" onclick="alert('Edit record ${row.id}')" title="Edit">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="action-btn delete-btn" onclick="alert('Delete record ${row.uniqueId}')" title="Delete">
+                    <button class="action-btn delete-btn" onclick="alert('Delete record ${row.id}')" title="Delete">
                         <i class="fas fa-trash"></i>
                     </button>
                 </td>

@@ -19,23 +19,35 @@ public class OverrideController {
 
     /**
      * GET /api/v1/guidance-engine/override
-     * Query params: size, page, sort, direction
+     * Query params: size, page, sort, direction, and any QBE filters (e.g., overrideLevel, effectiveDate)
      */
     @GetMapping("/override")
     public Map<String, Object> getOverrides(
             @RequestParam(defaultValue = "20") int size,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "uniqueId") String sort,
-            @RequestParam(defaultValue = "ASC") String direction) {
+            @RequestParam(defaultValue = "ASC") String direction,
+            @RequestParam Map<String, String> allParams) {
         
         try {
             // Build sort specification
             List<SortSpec> sorts = new ArrayList<>();
             sorts.add(new SortSpec(sort, direction));
             
-            // Call the client method
+            // Collect QBE filters - exclude known paging/sort keys
+            Map<String, String> qbe = new HashMap<>();
+            Set<String> excludedKeys = Set.of("size", "page", "sort", "direction");
+            allParams.forEach((key, value) -> {
+                if (!excludedKeys.contains(key) && value != null && !value.isEmpty()) {
+                    qbe.put(key, value);
+                }
+            });
+            
+            System.out.println("QBE Filters: " + qbe);
+            
+            // Call the client method with QBE filters
             PageResponse<OverrideRule> response = guidanceOverrideClient.search(
-                    new HashMap<>(), // QBE filters (empty for now)
+                    qbe,
                     sorts,
                     page,
                     size
@@ -65,5 +77,4 @@ public class OverrideController {
             return errorResponse;
         }
     }
-    
 }

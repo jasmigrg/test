@@ -299,76 +299,76 @@
                             <tr class="qbe-row">
                                 <th class="checkbox-col"></th>
                                 <th data-column-key="uniqueId">
-                                    <input name="qbe.uniqueId" value="${qbe['uniqueId']!}" class="qbe-input" title="Visual assist: unique override identifier">
+                                    <input name="uniqueId" value="${qbe['uniqueId']!}" class="qbe-input" title="Visual assist: unique override identifier">
                                 </th>
                                 <th data-column-key="overrideLevel">
-                                    <input name="qbe.overrideLevel" value="${qbe['overrideLevel']!}" class="qbe-input" title="Visual assist: level of the override(10-90)">
+                                    <input name="overrideLevel" value="${qbe['overrideLevel']!}" class="qbe-input" title="Visual assist: level of the override(10-90)">
                                 </th>
                                 <th data-column-key="effectiveDate">
-                                    <input name="qbe.effectiveDate" value="${qbe['effectiveDate']!}" class="qbe-input" type="date" title="Visual assist: effective date">
+                                    <input name="effectiveDate" value="${qbe['effectiveDate']!}" class="qbe-input" type="date" title="Visual assist: effective date">
                                 </th>
                                 <th data-column-key="terminationDate">
-                                    <input name="qbe.terminationDate" value="${qbe['terminationDate']!}" class="qbe-input" type="date" title="Visual assist: termination date">
+                                    <input name="terminationDate" value="${qbe['terminationDate']!}" class="qbe-input" type="date" title="Visual assist: termination date">
                                 </th>
                                 <th data-column-key="customerSegment">
-                                    <input name="qbe.customerSegment" value="${qbe['customerSegment']!}" class="qbe-input">
+                                    <input name="customerSegment" value="${qbe['customerSegment']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="customerMarket">
-                                    <input name="qbe.customerMarket" value="${qbe['customerMarket']!}" class="qbe-input">
+                                    <input name="customerMarket" value="${qbe['customerMarket']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="customerCluster">
-                                    <input name="qbe.customerCluster" value="${qbe['customerCluster']!}" class="qbe-input">
+                                    <input name="customerCluster" value="${qbe['customerCluster']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="itemNumber">
-                                    <input name="qbe.itemNumber" value="${qbe['itemNumber']!}" class="qbe-input">
+                                    <input name="itemNumber" value="${qbe['itemNumber']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="productSubCategory">
-                                    <input name="qbe.productSubCategory" value="${qbe['productSubCategory']!}" class="qbe-input">
+                                    <input name="productSubCategory" value="${qbe['productSubCategory']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="baseMargin">
-                                    <input name="qbe.baseMargin" value="${qbe['baseMargin']!}" class="qbe-input">
+                                    <input name="baseMargin" value="${qbe['baseMargin']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="targetMargin">
-                                    <input name="qbe.targetMargin" value="${qbe['targetMargin']!}" class="qbe-input">
+                                    <input name="targetMargin" value="${qbe['targetMargin']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="premiumMargin">
-                                    <input name="qbe.premiumMargin" value="${qbe['premiumMargin']!}" class="qbe-input">
+                                    <input name="premiumMargin" value="${qbe['premiumMargin']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="baseCost">
-                                    <input name="qbe.baseCost" value="${qbe['baseCost']!}" class="qbe-input">
+                                    <input name="baseCost" value="${qbe['baseCost']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="targetCost">
-                                    <input name="qbe.targetCost" value="${qbe['targetCost']!}" class="qbe-input">
+                                    <input name="targetCost" value="${qbe['targetCost']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="basePrice">
-                                    <input name="qbe.basePrice" value="${qbe['basePrice']!}" class="qbe-input">
+                                    <input name="basePrice" value="${qbe['basePrice']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="targetPrice">
-                                    <input name="qbe.targetPrice" value="${qbe['targetPrice']!}" class="qbe-input">
+                                    <input name="targetPrice" value="${qbe['targetPrice']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="premiumPrice">
-                                    <input name="qbe.premiumPrice" value="${qbe['premiumPrice']!}" class="qbe-input">
+                                    <input name="premiumPrice" value="${qbe['premiumPrice']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="uom">
-                                    <input name="qbe.uom" value="${qbe['uom']!}" class="qbe-input">
+                                    <input name="uom" value="${qbe['uom']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="reasonCode">
-                                    <input name="qbe.reasonCode" value="${qbe['reasonCode']!}" class="qbe-input">
+                                    <input name="reasonCode" value="${qbe['reasonCode']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="notes">
-                                    <input name="qbe.notes" value="${qbe['notes']!}" class="qbe-input">
+                                    <input name="notes" value="${qbe['notes']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="programId">
-                                    <input name="qbe.programId" value="${qbe['programId']!}" class="qbe-input">
+                                    <input name="programId" value="${qbe['programId']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="userId">
-                                    <input name="qbe.userId" value="${qbe['userId']!}" class="qbe-input">
+                                    <input name="userId" value="${qbe['userId']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="dateUpdated">
-                                    <input name="qbe.dateUpdated" value="${qbe['dateUpdated']!}" class="qbe-input" type="date">
+                                    <input name="dateUpdated" value="${qbe['dateUpdated']!}" class="qbe-input" type="date">
                                 </th>
                                 <th data-column-key="timeUpdated">
-                                    <input name="qbe.timeUpdated" value="${qbe['timeUpdated']!}" class="qbe-input" placeholder="HH:MM">
+                                    <input name="timeUpdated" value="${qbe['timeUpdated']!}" class="qbe-input" placeholder="HH:MM">
                                 </th>
                                 <th class="actions-col"></th>
                             </tr>

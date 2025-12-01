@@ -14,6 +14,7 @@
     <script src="/js/qbe-filter.js" defer></script>
     <script src="/js/pagination.js" defer></script>
     <script src="/js/override-browse.js" defer></script>
+    <script src="/js/override-viewer.js" defer></script>
 </head>
 <body>
     <!-- Top Shell -->
@@ -299,76 +300,76 @@
                             <tr class="qbe-row">
                                 <th class="checkbox-col"></th>
                                 <th data-column-key="uniqueId">
-                                    <input name="qbe.uniqueId" value="${qbe['uniqueId']!}" class="qbe-input" title="Visual assist: unique override identifier">
+                                    <input name="uniqueId" value="${qbe['uniqueId']!}" class="qbe-input" title="Visual assist: unique override identifier">
                                 </th>
                                 <th data-column-key="overrideLevel">
-                                    <input name="qbe.overrideLevel" value="${qbe['overrideLevel']!}" class="qbe-input" title="Visual assist: level of the override(10-90)">
+                                    <input name="overrideLevel" value="${qbe['overrideLevel']!}" class="qbe-input" title="Visual assist: level of the override(10-90)">
                                 </th>
                                 <th data-column-key="effectiveDate">
-                                    <input name="qbe.effectiveDate" value="${qbe['effectiveDate']!}" class="qbe-input" type="date" title="Visual assist: effective date">
+                                    <input name="effectiveDate" value="${qbe['effectiveDate']!}" class="qbe-input" type="date" title="Visual assist: effective date">
                                 </th>
                                 <th data-column-key="terminationDate">
-                                    <input name="qbe.terminationDate" value="${qbe['terminationDate']!}" class="qbe-input" type="date" title="Visual assist: termination date">
+                                    <input name="terminationDate" value="${qbe['terminationDate']!}" class="qbe-input" type="date" title="Visual assist: termination date">
                                 </th>
                                 <th data-column-key="customerSegment">
-                                    <input name="qbe.customerSegment" value="${qbe['customerSegment']!}" class="qbe-input">
+                                    <input name="customerSegment" value="${qbe['customerSegment']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="customerMarket">
-                                    <input name="qbe.customerMarket" value="${qbe['customerMarket']!}" class="qbe-input">
+                                    <input name="customerMarket" value="${qbe['customerMarket']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="customerCluster">
-                                    <input name="qbe.customerCluster" value="${qbe['customerCluster']!}" class="qbe-input">
+                                    <input name="customerCluster" value="${qbe['customerCluster']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="itemNumber">
-                                    <input name="qbe.itemNumber" value="${qbe['itemNumber']!}" class="qbe-input">
+                                    <input name="itemNumber" value="${qbe['itemNumber']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="productSubCategory">
-                                    <input name="qbe.productSubCategory" value="${qbe['productSubCategory']!}" class="qbe-input">
+                                    <input name="productSubCategory" value="${qbe['productSubCategory']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="baseMargin">
-                                    <input name="qbe.baseMargin" value="${qbe['baseMargin']!}" class="qbe-input">
+                                    <input name="baseMargin" value="${qbe['baseMargin']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="targetMargin">
-                                    <input name="qbe.targetMargin" value="${qbe['targetMargin']!}" class="qbe-input">
+                                    <input name="targetMargin" value="${qbe['targetMargin']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="premiumMargin">
-                                    <input name="qbe.premiumMargin" value="${qbe['premiumMargin']!}" class="qbe-input">
+                                    <input name="premiumMargin" value="${qbe['premiumMargin']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="baseCost">
-                                    <input name="qbe.baseCost" value="${qbe['baseCost']!}" class="qbe-input">
+                                    <input name="baseCost" value="${qbe['baseCost']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="targetCost">
-                                    <input name="qbe.targetCost" value="${qbe['targetCost']!}" class="qbe-input">
+                                    <input name="targetCost" value="${qbe['targetCost']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="basePrice">
-                                    <input name="qbe.basePrice" value="${qbe['basePrice']!}" class="qbe-input">
+                                    <input name="basePrice" value="${qbe['basePrice']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="targetPrice">
-                                    <input name="qbe.targetPrice" value="${qbe['targetPrice']!}" class="qbe-input">
+                                    <input name="targetPrice" value="${qbe['targetPrice']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="premiumPrice">
-                                    <input name="qbe.premiumPrice" value="${qbe['premiumPrice']!}" class="qbe-input">
+                                    <input name="premiumPrice" value="${qbe['premiumPrice']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="uom">
-                                    <input name="qbe.uom" value="${qbe['uom']!}" class="qbe-input">
+                                    <input name="uom" value="${qbe['uom']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="reasonCode">
-                                    <input name="qbe.reasonCode" value="${qbe['reasonCode']!}" class="qbe-input">
+                                    <input name="reasonCode" value="${qbe['reasonCode']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="notes">
-                                    <input name="qbe.notes" value="${qbe['notes']!}" class="qbe-input">
+                                    <input name="notes" value="${qbe['notes']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="programId">
-                                    <input name="qbe.programId" value="${qbe['programId']!}" class="qbe-input">
+                                    <input name="programId" value="${qbe['programId']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="userId">
-                                    <input name="qbe.userId" value="${qbe['userId']!}" class="qbe-input">
+                                    <input name="userId" value="${qbe['userId']!}" class="qbe-input">
                                 </th>
                                 <th data-column-key="dateUpdated">
-                                    <input name="qbe.dateUpdated" value="${qbe['dateUpdated']!}" class="qbe-input" type="date">
+                                    <input name="dateUpdated" value="${qbe['dateUpdated']!}" class="qbe-input" type="date">
                                 </th>
                                 <th data-column-key="timeUpdated">
-                                    <input name="qbe.timeUpdated" value="${qbe['timeUpdated']!}" class="qbe-input" placeholder="HH:MM">
+                                    <input name="timeUpdated" value="${qbe['timeUpdated']!}" class="qbe-input" placeholder="HH:MM">
                                 </th>
                                 <th class="actions-col"></th>
                             </tr>
@@ -405,6 +406,17 @@
                                         <td data-column-key="userId">${r.userId!}</td>
                                         <td data-column-key="dateUpdated">${r.dateUpdated!}</td>
                                         <td data-column-key="timeUpdated">${r.timeUpdated!}</td>
+                                        <td class="actions-col">
+                                            <button class="action-btn view-btn btn-view-override" onclick="OverrideViewer.openViewDialog(event)" data-override-id="${r.id}" title="View">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                            <button class="action-btn edit-btn" onclick="alert('Edit record ${r.id}')" title="Edit">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="action-btn delete-btn" onclick="alert('Delete record ${r.id}')" title="Delete">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </td>
                                     </tr>
                                 </#list>
                             <#else>
@@ -500,5 +512,154 @@
         </div>
     </div>
 
-</body>
-</html>
+    <!-- View Override Details Modal -->
+    <div id="viewOverrideModal" class="preference-modal">
+        <div class="preference-modal-content">
+            <div class="preference-modal-header">
+                <h2>Override Details</h2>
+                <button type="button" class="preference-modal-close" onclick="OverrideViewer.closeViewDialog()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="preference-modal-body" style="max-height: 600px; overflow-y: auto;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    
+                    <!-- Left Column -->
+                    <div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Unique ID</label>
+                            <span id="view-uniqueId" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Override Level</label>
+                            <span id="view-overrideLevel" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Effective Date</label>
+                            <span id="view-effectiveDate" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Termination Date</label>
+                            <span id="view-terminationDate" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Customer Segment</label>
+                            <span id="view-customerSegment" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Customer Market</label>
+                            <span id="view-customerMarket" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Customer Cluster</label>
+                            <span id="view-customerCluster" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Item Number</label>
+                            <span id="view-itemNumber" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Product Sub Category</label>
+                            <span id="view-productSubCategory" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Base Margin</label>
+                            <span id="view-baseMargin" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Target Margin</label>
+                            <span id="view-targetMargin" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Premium Margin</label>
+                            <span id="view-premiumMargin" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                    </div>
+
+                    <!-- Right Column -->
+                    <div>
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Base Cost</label>
+                            <span id="view-baseCost" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Target Cost</label>
+                            <span id="view-targetCost" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Base Price</label>
+                            <span id="view-basePrice" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Target Price</label>
+                            <span id="view-targetPrice" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Premium Price</label>
+                            <span id="view-premiumPrice" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Unit of Measure</label>
+                            <span id="view-uom" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Reason Code</label>
+                            <span id="view-reasonCode" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Notes</label>
+                            <span id="view-notes" style="display: block; font-size: 14px; color: #333; word-break: break-word;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Program ID</label>
+                            <span id="view-programId" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">User ID</label>
+                            <span id="view-userId" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Date Updated</label>
+                            <span id="view-dateUpdated" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <label style="display: block; font-weight: 600; font-size: 12px; color: #666; margin-bottom: 4px;">Time Updated</label>
+                            <span id="view-timeUpdated" style="display: block; font-size: 14px; color: #333;"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="preference-modal-footer">
+                <button type="button" class="btn btn-cancel" onclick="OverrideViewer.closeViewDialog()">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+
+</body></html>

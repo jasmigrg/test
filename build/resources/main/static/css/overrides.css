@@ -625,36 +625,40 @@ body {
     background-color: #f5f5f5;
 }
 
-/* QBE Row */
-.qbe-row th {
-    padding: 8px;
-    background-color: #007c91;
-    border: 1px solid #e0e0e0;
-    font-weight: normal;
-    color: #ffffff;
-    white-space: nowrap;
-    min-width: 120px;
-}
-
-.qbe-input {
-    width: 100%;
-    padding: 6px 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 13px;
-}
-
-.qbe-input:focus {
-    outline: none;
-    border-color: #007c91;
-}
-
 /* Checkbox Column */
 .checkbox-col {
-    width: 40px;
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    padding: 0 !important;
     text-align: center !important;
     vertical-align: middle !important;
-    padding: 12px !important;
+    border-left: 1px solid #e0e0e0;
+    border-right: 1px solid #e0e0e0;
+}
+
+.grid th.checkbox-col {
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    padding: 0 !important;
+    background-color: #007c91;
+    color: #ffffff;
+}
+
+.grid td.checkbox-col {
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    padding: 0 !important;
+}
+
+.qbe-row th.checkbox-col {
+    width: 36px !important;
+    min-width: 36px !important;
+    max-width: 36px !important;
+    padding: 0 !important;
+    background-color: #007c91;
 }
 
 .checkbox-col input[type="checkbox"] {
@@ -662,11 +666,15 @@ body {
     display: inline-block;
     vertical-align: middle;
     cursor: pointer;
+    width: 18px;
+    height: 18px;
+    accent-color: #007c91;
 }
 
 .header-row .checkbox-col,
 .qbe-row .checkbox-col {
     text-align: center !important;
+    vertical-align: middle !important;
 }
 
 /* Empty State */
@@ -1233,11 +1241,11 @@ body {
 .action-btn {
     background: none;
     border: none;
-    padding: 8px;
+    padding: 2px 6px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 13px;
     transition: all 0.3s ease;
-    margin: 0 4px;
+    margin-right: 4px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -1245,7 +1253,7 @@ body {
 }
 
 .action-btn i {
-    font-size: 16px;
+    font-size: 13px;
 }
 
 .action-btn.view-btn {
@@ -1296,4 +1304,34 @@ body {
         width: 100%;
         flex-wrap: wrap;
     }
+}
+
+/* QBE Row */
+.qbe-row th {
+    padding: 8px;
+    background-color: #007c91;
+    border: 1px solid #e0e0e0;
+    font-weight: normal;
+    color: #ffffff;
+    white-space: nowrap;
+    min-width: 120px;
+}
+
+.qbe-input {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+    height: 32px;
+    box-sizing: border-box;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1.4;
+}
+
+.qbe-input:focus {
+    outline: none;
+    border-color: #007c91;
+    box-shadow: 0 0 0 3px rgba(0, 124, 145, 0.1);
 }

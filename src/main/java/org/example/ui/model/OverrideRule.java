@@ -13,12 +13,26 @@ public class OverrideRule {
     Integer overrideLevel;
     LocalDate effectiveDate;
     LocalDate terminationDate;
+    String customerSegment;
     String customerMarket;
     String customerCluster;
-    String customerSegment;
     String itemNumber;
-    Double basePrice;
+    String productSubCategory;
+    Double baseMargin;
     Double targetMargin;
+    Double premiumMargin;
+    Double baseCost;
+    Double targetCost;
+    Double basePrice;
+    Double targetPrice;
+    Double premiumPrice;
+    String uom;
+    String reasonCode;
+    String notes;
+    String programId;
+    String userId;
+    LocalDate dateUpdated;
+    String timeUpdated;
     String status;
 
     private static final DateTimeFormatter UI_DATE_FMT =
@@ -31,5 +45,4 @@ public class OverrideRule {
     public String getTerminationDateFormatted(){
         return terminationDate != null ? terminationDate.format(UI_DATE_FMT) : "";
     }
-
 }

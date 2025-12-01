@@ -14,6 +14,7 @@ const GridManager = {
             ]
         }
     },
+    currentPreferenceKey: 'default',
     
     // Toggle dropdown menus
     initDropdowns() {
@@ -321,10 +322,121 @@ const GridManager = {
             columnOrder: Array.from(menuItems).map(item => item.dataset.columnKey)
         };
 
-        console.log('Saved preference:', { name: preferenceName, visibleColumns, columnOrder: this.savedPreferences[key].columnOrder });
+        console.log(`Saved preference: "${preferenceName}" with ${visibleColumns.length} columns`);
 
         // Close the preference modal
         this.closePreferenceModal();
+
+        // Apply the preference immediately
+        this.applyPreference(this.savedPreferences[key]);
+        
+        // Set as current preference
+        this.currentPreferenceKey = key;
+        
+        // Update dropdown to show this preference as selected
+        const preferenceRadio = document.querySelector(`input[name="gridPreference"][value="${key}"]`);
+        if (preferenceRadio) {
+            preferenceRadio.checked = true;
+        }
+
+        // Show success modal with preference name
+        this.showSuccessModal(preferenceName);
+    },
+
+    updateSuggestionNames() {
+        // Get all used preference names
+        const usedNames = Object.values(this.savedPreferences).map(p => p.name.toLowerCase());
+        
+        // Generate suggestion names, skipping used ones
+        const suggestions = [];
+        let counter = 1;
+        
+        while (suggestions.length < 3) {
+            const name = `Preference ${counter}`;
+            if (!usedNames.includes(name.toLowerCase())) {
+                suggestions.push({ name, value: `preference-${counter}` });
+            }
+            counter++;
+        }
+
+        // Update suggestion links
+        const suggestionList = document.querySelector('.suggestion-list');
+        if (suggestionList) {
+            suggestionList.innerHTML = suggestions.map(s => 
+                `<a href="#" class="suggestion-link" onclick="document.getElementById('suggestedPreferenceName').value='${s.name}'; event.preventDefault();">${s.name}</a>`
+            ).join('');
+        }
+    },
+
+    closePreferenceModal() {
+        const modal = document.getElementById('preferenceModal');
+        if (modal) {
+            modal.classList.remove('show');
+        }
+    },
+
+    savePreferenceFromModal() {
+        const preferenceType = document.querySelector('input[name="preferenceType"]:checked').value;
+        let preferenceName = '';
+
+        if (preferenceType === 'suggested') {
+            const suggestedInput = document.getElementById('suggestedPreferenceName');
+            const suggestedValue = suggestedInput.value.trim();
+            if (!suggestedValue) {
+                this.showToast('Please select a suggested preference name', 'error');
+                return;
+            }
+            preferenceName = suggestedValue;
+        } else {
+            const customName = document.getElementById('customPreferenceName').value.trim();
+            if (!customName) {
+                this.showToast('Please enter a preference name', 'error');
+                return;
+            }
+            preferenceName = customName;
+        }
+
+        const columnsMenu = document.getElementById('columnsMenu');
+        if (!columnsMenu) return;
+
+        // Get columns in current order from the DOM
+        const menuItems = columnsMenu.querySelectorAll('.gm-menu-item[draggable="true"]');
+        const visibleColumns = Array.from(menuItems)
+            .filter(item => {
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                return checkbox && checkbox.checked;
+            })
+            .map(item => item.dataset.columnKey);
+
+        if (visibleColumns.length === 0) {
+            this.showToast('Please select at least one column', 'error');
+            return;
+        }
+
+        const key = preferenceName.toLowerCase().replace(/\s+/g, '-');
+
+        this.savedPreferences[key] = {
+            name: preferenceName,
+            visibleColumns: visibleColumns,
+            columnOrder: Array.from(menuItems).map(item => item.dataset.columnKey)
+        };
+
+        console.log(`Saved preference: "${preferenceName}" with ${visibleColumns.length} columns`);
+
+        // Close the preference modal
+        this.closePreferenceModal();
+
+        // Apply the preference immediately
+        this.applyPreference(this.savedPreferences[key]);
+        
+        // Set as current preference
+        this.currentPreferenceKey = key;
+        
+        // Update dropdown to show this preference as selected
+        const preferenceRadio = document.querySelector(`input[name="gridPreference"][value="${key}"]`);
+        if (preferenceRadio) {
+            preferenceRadio.checked = true;
+        }
 
         // Show success modal with preference name
         this.showSuccessModal(preferenceName);
@@ -356,10 +468,11 @@ const GridManager = {
 
         Object.keys(this.savedPreferences).forEach(key => {
             const pref = this.savedPreferences[key];
+            const isCurrentPreference = key === this.currentPreferenceKey;
             const label = document.createElement('label');
-            label.className = 'dropdown-item';
+            label.className = `dropdown-item${isCurrentPreference ? ' active' : ''}`;
             label.innerHTML = `
-                <input type="radio" name="gridPreference" value="${key}" ${key === 'default' ? 'checked' : ''}/>
+                <input type="radio" name="gridPreference" value="${key}" ${isCurrentPreference ? 'checked' : ''}/>
                 ${pref.name}
             `;
             preferenceMenu.insertBefore(label, footer);
@@ -379,6 +492,18 @@ const GridManager = {
         if (!preference) {
             this.showToast('Preference not found.', 'error');
             return;
+        }
+
+        // Update current preference
+        this.currentPreferenceKey = preferenceKey;
+        
+        // Update UI to show active state
+        const preferenceMenu = document.getElementById('preferenceMenu');
+        if (preferenceMenu) {
+            const items = preferenceMenu.querySelectorAll('.dropdown-item');
+            items.forEach(item => item.classList.remove('active'));
+            const activeItem = preferenceMenu.querySelector(`label:has(input[value="${preferenceKey}"])`);
+            if (activeItem) activeItem.classList.add('active');
         }
 
         this.applyPreference(preference);
@@ -456,12 +581,16 @@ const GridManager = {
             }
         }
 
-        console.log('Applied preference:', preference);
+        console.log(`Applied preference: "${preference.name}"`);
     },
 
     reorderRowColumns(row, columnOrder) {
         // Get the checkbox cell (first cell, always stays first)
         const checkboxCell = row.querySelector('td.checkbox-col, th.checkbox-col');
+        
+        // Get the actions cell (last cell, always stays last)
+        const actionsCell = row.querySelector('td.actions-col, th.actions-col');
+        
         const cells = Array.from(row.querySelectorAll('td[data-column-key], th[data-column-key]'));
         
         // Create a map of column key to cell
@@ -484,6 +613,11 @@ const GridManager = {
                 fragment.appendChild(cellMap[key]);
             }
         });
+
+        // Add actions cell last if it exists
+        if (actionsCell) {
+            fragment.appendChild(actionsCell.cloneNode(true));
+        }
 
         // Clear the row and rebuild it
         row.innerHTML = '';

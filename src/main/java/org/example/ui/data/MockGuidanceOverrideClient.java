@@ -26,11 +26,26 @@ public class MockGuidanceOverrideClient implements GuidanceOverrideClient {
                     .overrideLevel(((i % 9) + 1) * 10)
                     .effectiveDate(LocalDate.now().minusDays(i % 45))
                     .terminationDate(LocalDate.now().plusDays((i % 120) + 1))
+                    .customerSegment("SEG_" + (i % 5))
                     .customerMarket((i % 2 == 0) ? "North" : "South")
                     .customerCluster((i % 3 == 0) ? "Enterprise" : "SMB")
                     .itemNumber("ITEM-" + (1000 + i))
-                    .basePrice(10.0 + (i % 60))
+                    .productSubCategory("CAT_" + (i % 10))
+                    .baseMargin(0.05 + ((i % 20) / 100.0))
                     .targetMargin(0.10 + ((i % 20) / 100.0))
+                    .premiumMargin(0.15 + ((i % 20) / 100.0))
+                    .baseCost(10.0 + (i % 60))
+                    .targetCost(20.0 + (i % 60))
+                    .basePrice(10.0 + (i % 60))
+                    .targetPrice(50.0 + (i % 100))
+                    .premiumPrice(100.0 + (i % 200))
+                    .uom("EA")
+                    .reasonCode("RC_" + (i % 10))
+                    .notes("Note for record " + i)
+                    .programId("PROG_" + (i % 5))
+                    .userId("USER_" + (i % 3))
+                    .dateUpdated(LocalDate.now().minusDays(i % 10))
+                    .timeUpdated(String.format("%02d:%02d", i % 24, (i * 7) % 60))
                     .status((i % 7 == 0) ? "Inactive" : "Active")
                     .build());
         }
@@ -98,25 +113,55 @@ public class MockGuidanceOverrideClient implements GuidanceOverrideClient {
             return ok;
         });
 
-        Comparator<OverrideRule> cmp = Comparator.comparing(OverrideRule::getId);
-        for (SortSpec spec : sorts) {
-            Comparator<OverrideRule> c = switch (spec.field()) {
-                case "customerMarket" -> Comparator.comparing(OverrideRule::getCustomerMarket, Comparator.nullsLast(String::compareTo));
-                case "customerCluster" -> Comparator.comparing(OverrideRule::getCustomerCluster, Comparator.nullsLast(String::compareTo));
-                case "itemNumber" -> Comparator.comparing(OverrideRule::getItemNumber, Comparator.nullsLast(String::compareTo));
-                case "overrideLevel" -> Comparator.comparing(OverrideRule::getOverrideLevel, Comparator.nullsLast(Integer::compareTo));
-                case "effectiveDate" -> Comparator.comparing(OverrideRule::getEffectiveDate, Comparator.naturalOrder());
-                case "terminationDate" -> Comparator.comparing(OverrideRule::getTerminationDate, Comparator.naturalOrder());
-                case "basePrice" -> Comparator.comparing(OverrideRule::getBasePrice, Comparator.nullsLast(Double::compareTo));
-                case "targetMargin" -> Comparator.comparing(OverrideRule::getTargetMargin, Comparator.nullsLast(Double::compareTo));
-                case "status" -> Comparator.comparing(OverrideRule::getStatus, Comparator.nullsLast(String::compareTo));
-                default -> Comparator.comparing(OverrideRule::getId);
-            };
-            if ("desc".equalsIgnoreCase(spec.dir())) {
-                c = c.reversed();
+        // Build comparator based on sort specs, or fall back to ID if no sorts provided
+        Comparator<OverrideRule> cmp;
+        if (sorts != null && !sorts.isEmpty()) {
+            // Start with a neutral comparator
+            cmp = (o1, o2) -> 0;
+
+            // Chain comparators from each sort spec
+            for (SortSpec spec : sorts) {
+                Comparator<OverrideRule> c = switch (spec.field()) {
+                    case "uniqueId" -> Comparator.comparing(OverrideRule::getId, Comparator.nullsLast(Long::compareTo));
+                    case "overrideLevel" -> Comparator.comparing(OverrideRule::getOverrideLevel, Comparator.nullsLast(Integer::compareTo));
+                    case "effectiveDate" -> Comparator.comparing(OverrideRule::getEffectiveDate, Comparator.nullsLast(LocalDate::compareTo));
+                    case "terminationDate" -> Comparator.comparing(OverrideRule::getTerminationDate, Comparator.nullsLast(LocalDate::compareTo));
+                    case "customerSegment" -> Comparator.comparing(OverrideRule::getCustomerSegment, Comparator.nullsLast(String::compareTo));
+                    case "customerMarket" -> Comparator.comparing(OverrideRule::getCustomerMarket, Comparator.nullsLast(String::compareTo));
+                    case "customerCluster" -> Comparator.comparing(OverrideRule::getCustomerCluster, Comparator.nullsLast(String::compareTo));
+                    case "itemNumber" -> Comparator.comparing(OverrideRule::getItemNumber, Comparator.nullsLast(String::compareTo));
+                    case "productSubCategory" -> Comparator.comparing(OverrideRule::getProductSubCategory, Comparator.nullsLast(String::compareTo));
+                    case "baseMargin" -> Comparator.comparing(OverrideRule::getBaseMargin, Comparator.nullsLast(Double::compareTo));
+                    case "targetMargin" -> Comparator.comparing(OverrideRule::getTargetMargin, Comparator.nullsLast(Double::compareTo));
+                    case "premiumMargin" -> Comparator.comparing(OverrideRule::getPremiumMargin, Comparator.nullsLast(Double::compareTo));
+                    case "baseCost" -> Comparator.comparing(OverrideRule::getBaseCost, Comparator.nullsLast(Double::compareTo));
+                    case "targetCost" -> Comparator.comparing(OverrideRule::getTargetCost, Comparator.nullsLast(Double::compareTo));
+                    case "basePrice" -> Comparator.comparing(OverrideRule::getBasePrice, Comparator.nullsLast(Double::compareTo));
+                    case "targetPrice" -> Comparator.comparing(OverrideRule::getTargetPrice, Comparator.nullsLast(Double::compareTo));
+                    case "premiumPrice" -> Comparator.comparing(OverrideRule::getPremiumPrice, Comparator.nullsLast(Double::compareTo));
+                    case "uom" -> Comparator.comparing(OverrideRule::getUom, Comparator.nullsLast(String::compareTo));
+                    case "reasonCode" -> Comparator.comparing(OverrideRule::getReasonCode, Comparator.nullsLast(String::compareTo));
+                    case "notes" -> Comparator.comparing(OverrideRule::getNotes, Comparator.nullsLast(String::compareTo));
+                    case "programId" -> Comparator.comparing(OverrideRule::getProgramId, Comparator.nullsLast(String::compareTo));
+                    case "userId" -> Comparator.comparing(OverrideRule::getUserId, Comparator.nullsLast(String::compareTo));
+                    case "dateUpdated" -> Comparator.comparing(OverrideRule::getDateUpdated, Comparator.nullsLast(LocalDate::compareTo));
+                    case "timeUpdated" -> Comparator.comparing(OverrideRule::getTimeUpdated, Comparator.nullsLast(String::compareTo));
+                    case "status" -> Comparator.comparing(OverrideRule::getStatus, Comparator.nullsLast(String::compareTo));
+                    default -> (o1, o2) -> 0;
+                };
+
+                // Reverse if descending
+                if ("desc".equalsIgnoreCase(spec.dir())) {
+                    c = c.reversed();
+                }
+
+                cmp = cmp.thenComparing(c);
             }
-            cmp = cmp.thenComparing(c);
+        } else {
+            // No sort specs provided, default to ID
+            cmp = Comparator.comparing(OverrideRule::getId);
         }
+
         List<OverrideRule> sorted = s.sorted(cmp).toList();
         int from = Math.max(page * size, 0), to = Math.min(from + size, sorted.size());
         List<OverrideRule> slice = from >= sorted.size() ? List.of() : sorted.subList(from, to);
