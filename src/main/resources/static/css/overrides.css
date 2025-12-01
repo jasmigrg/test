@@ -418,7 +418,7 @@ body {
     display: none;
     position: absolute;
     top: 100%;
-    left: 0;
+    right: 0;
     margin-top: 4px;
     background: white;
     border: 1px solid #ddd;
@@ -586,6 +586,32 @@ body {
     background-color: #007c91;
     white-space: nowrap;
     min-width: 120px;
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.2s;
+}
+
+.grid th:hover {
+    background-color: #006a7a;
+}
+
+.grid th[data-column-key]::after {
+    content: '';
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-left: 6px;
+    opacity: 0.3;
+}
+
+.grid th.sort-asc::after {
+    content: '▲';
+    opacity: 1;
+}
+
+.grid th.sort-desc::after {
+    content: '▼';
+    opacity: 1;
 }
 
 .grid td {
@@ -1054,6 +1080,198 @@ body {
         transform: translateY(0);
         opacity: 1;
     }
+}
+
+/* Pagination Controls */
+.pagination-controls {
+    padding: 16px 24px;
+    background-color: #fafafa;
+    border-top: 1px solid #e0e0e0;
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.pagination-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.pagination-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pagination-label {
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.pagination-select {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 13px;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    min-width: 60px;
+}
+
+.pagination-select:hover {
+    border-color: #007c91;
+}
+
+.pagination-select:focus {
+    outline: none;
+    border-color: #007c91;
+    box-shadow: 0 0 0 3px rgba(0, 124, 145, 0.1);
+}
+
+.pagination-info {
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
+    min-width: 100px;
+    text-align: right;
+}
+
+.pagination-nav-buttons {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.pagination-icon-btn {
+    background: none;
+    border: none;
+    padding: 8px 10px;
+    min-width: auto;
+    min-height: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 600;
+    color: #007c91;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.pagination-icon-btn i {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1;
+}
+
+.pagination-icon-btn:hover:not(:disabled) {
+    color: #006a7a;
+}
+
+.pagination-icon-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    color: #999;
+}
+
+.pagination-arrow-icon {
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    filter: invert(28%) sepia(60%) saturate(1070%) hue-rotate(178deg) brightness(99%) contrast(102%);
+    transition: filter 0.2s;
+}
+
+.pagination-icon-btn:hover:not(:disabled) .pagination-arrow-icon {
+    filter: invert(18%) sepia(70%) saturate(1050%) hue-rotate(178deg) brightness(95%) contrast(105%);
+}
+
+.pagination-icon-btn:disabled .pagination-arrow-icon {
+    filter: invert(60%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%);
+}
+
+
+/* Actions Column */
+.actions-col {
+    position: sticky;
+    right: 0;
+    background-color: #ffffff;
+    padding: 12px !important;
+    text-align: center;
+    min-width: 120px;
+    z-index: 5;
+    border-left: 1px solid #e0e0e0;
+}
+
+.grid th.actions-col {
+    background-color: #007c91;
+    color: #ffffff;
+    white-space: nowrap;
+    text-align: center;
+    vertical-align: middle;
+    position: sticky;
+    right: 0;
+    z-index: 11;
+}
+
+.qbe-row th.actions-col {
+    position: sticky;
+    right: 0;
+    z-index: 11;
+    background-color: #007c91;
+}
+
+.grid tbody tr:hover .actions-col {
+    background-color: #f5f5f5;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    margin: 0 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+}
+
+.action-btn i {
+    font-size: 16px;
+}
+
+.action-btn.view-btn {
+    color: #666;
+}
+
+.action-btn.view-btn:hover {
+    color: #007c91;
+    background-color: #e6f5f8;
+}
+
+.action-btn.edit-btn {
+    color: #666;
+}
+
+.action-btn.edit-btn:hover {
+    color: #007c91;
+    background-color: #e6f5f8;
+}
+
+.action-btn.delete-btn {
+    color: #d32f2f;
+}
+
+.action-btn.delete-btn:hover {
+    background-color: #ffebee;
 }
 
 /* Responsive */

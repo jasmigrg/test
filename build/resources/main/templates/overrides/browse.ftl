@@ -12,6 +12,7 @@
     <script src="/js/row-selection.js" defer></script>
     <script src="/js/toolbar-actions.js" defer></script>
     <script src="/js/qbe-filter.js" defer></script>
+    <script src="/js/pagination.js" defer></script>
     <script src="/js/override-browse.js" defer></script>
 </head>
 <body>
@@ -293,6 +294,7 @@
                                 <th data-column-key="userId">User ID</th>
                                 <th data-column-key="dateUpdated">Date Updated</th>
                                 <th data-column-key="timeUpdated">Time Updated</th>
+                                <th class="actions-col">Actions</th>
                             </tr>
                             <tr class="qbe-row">
                                 <th class="checkbox-col"></th>
@@ -368,6 +370,7 @@
                                 <th data-column-key="timeUpdated">
                                     <input name="qbe.timeUpdated" value="${qbe['timeUpdated']!}" class="qbe-input" placeholder="HH:MM">
                                 </th>
+                                <th class="actions-col"></th>
                             </tr>
                         </thead>
                         <tbody>
