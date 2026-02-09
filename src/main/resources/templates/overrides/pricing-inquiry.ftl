@@ -4,7 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pricing Inquiry</title>
-  <link rel="stylesheet" href="/css/pricing-inquiry.css?v=2" />
+  <#assign ctx = (request.contextPath)!"" />
+  <link rel="stylesheet" href="${ctx}/css/pricing-inquiry.css?v=2" />
 </head>
 <body>
   <div class="app-shell">
@@ -658,6 +659,6 @@
       </section>
     </main>
   </div>
-  <script src="/js/pricing-inquiry.js?v=1"></script>
+  <script src="${ctx}/js/pricing-inquiry.js?v=1"></script>
 </body>
 </html>

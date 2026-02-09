@@ -4,8 +4,8 @@
   --card: #f3f4f5;
   --text: #2c2c2c;
   --muted: #6f757a;
-  --teal: #2a6c73;
-  --teal-dark: #1f5960;
+  --teal: #007C91;
+  --teal-dark: #006978;
   --line: #d7dadc;
   --shadow: 0 6px 18px rgba(32, 40, 45, 0.08);
 }
@@ -16,9 +16,20 @@
 
 body {
   margin: 0;
-  font-family: "Work Sans", "IBM Plex Sans", "Segoe UI", sans-serif;
+  font-family: "Work Sans", "IBM Plex Sans", "Segoe UI", Arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.3;
   color: var(--text);
   background: linear-gradient(120deg, #e9edf0, #f7f8f8 65%, #e8eef0);
+}
+
+input,
+button,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.2;
 }
 
 .app-shell {
@@ -141,7 +152,7 @@ body {
 
 .sidebar {
   grid-row: 2 / -1;
-  background: #2b5f66;
+  background: var(--teal);
   padding: 14px 0;
   display: flex;
   flex-direction: column;
@@ -165,7 +176,7 @@ body {
 }
 
 .sidebar-icon.active {
-  background: #1c4f55;
+  background: var(--teal-dark);
 }
 
 .content {
@@ -252,7 +263,7 @@ h1 {
 .tab-btn {
   border: 1px solid #bfc6c9;
   background: #e8ecee;
-  color: #2a6c73;
+  color: var(--teal);
   padding: 6px 16px;
   border-radius: 16px 16px 0 0;
   font-weight: 600;
@@ -260,9 +271,9 @@ h1 {
 }
 
 .tab-btn.active {
-  background: #2a6c73;
+  background: var(--teal);
   color: #ffffff;
-  border-color: #2a6c73;
+  border-color: var(--teal);
 }
 
 .collapse-toggle {
@@ -270,7 +281,7 @@ h1 {
   height: 32px;
   border-radius: 50%;
   border: none;
-  background: #2a6c73;
+  background: var(--teal);
   display: grid;
   place-items: center;
   cursor: pointer;
@@ -355,7 +366,7 @@ h1 {
 
 .table-title {
   font-size: 16px;
-  color: #2a6c73;
+  color: var(--teal);
 }
 
 .table-grid + .table-grid {
@@ -583,9 +594,9 @@ h1 {
 }
 
 .ghost-btn {
-  border: 1px solid #2a6c73;
+  border: 1px solid var(--teal);
   color: #ffffff;
-  background: #2a6c73;
+  background: var(--teal);
   padding: 7px 2px;
   border-radius: 5px;
   font-weight: 400;
@@ -612,7 +623,7 @@ h1 {
 .radio-group input {
   width: 14px;
   height: 16px;
-  accent-color: #2a6c73;
+  accent-color: var(--teal);
 }
 
 .button-row {
@@ -632,8 +643,8 @@ h1 {
 }
 
 .ghost-outline.cost-inquiry-btn {
-  background: #2a6c73;
-  border-color: #2a6c73;
+  background: var(--teal);
+  border-color: var(--teal);
   color: #ffffff;
 }
 
@@ -661,11 +672,7 @@ h1 {
   gap: 10px;
 }
 
-.pricing-info-card,
-.price-rule-card,
-.uom-card {
-  height: 507px;
-}
+/* heights are normalized via JS for cross-platform rendering */
 
 .level-row {
   align-items: flex-start;
@@ -781,12 +788,12 @@ h1 {
   padding: 26px 18px 17px;
   border-radius: 15px;
   background: rgba(217, 217, 217, 0.15);
-  height: 421px;
+  height: auto;
 }
 
 .inputs-card {
   padding: 26px 18px 36px;
-  height: 421px;
+  height: auto;
   background: rgba(217, 217, 217, 0.15);
 }
 
@@ -987,13 +994,13 @@ h1 {
 }
 
 .check-row input {
-  accent-color: #2a6c73;
+  accent-color: var(--teal);
 }
 
 .chk {
   width: 16px;
   height: 16px;
-  accent-color: #2a6c73;
+  accent-color: var(--teal);
 }
 
 .item-inline-row {

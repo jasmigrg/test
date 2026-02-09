@@ -41,4 +41,23 @@
       toggle?.setAttribute("aria-expanded", "true");
     });
   });
+
+  const equalizeHeights = (selector) => {
+    const items = Array.from(document.querySelectorAll(selector));
+    if (!items.length) return;
+    items.forEach((el) => (el.style.height = "auto"));
+    const max = Math.max(...items.map((el) => el.offsetHeight));
+    items.forEach((el) => (el.style.height = max + "px"));
+  };
+
+  const runLayout = () => {
+    equalizeHeights(".inputs-card, .customer-card, .item-card");
+    equalizeHeights(".pricing-info-card, .price-rule-card, .uom-card");
+  };
+
+  window.addEventListener("load", runLayout);
+  window.addEventListener("resize", () => {
+    clearTimeout(window.__piResize);
+    window.__piResize = setTimeout(runLayout, 100);
+  });
 })();
