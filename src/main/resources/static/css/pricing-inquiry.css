@@ -471,11 +471,10 @@ h1 {
   gap: 12px;
 }
 
-.price-grid .read-card .field-row label,
-.price-grid .read-card .check-row label {
-  width: 120px;
-  flex: 0 0 120px;
+.price-grid .read-card .field-row {
+  --label-w: 120px;
 }
+
 
 .price-grid .read-card .check-row {
   align-items: center;
@@ -547,6 +546,7 @@ h1 {
 .cost-row {
   align-items: center;
   flex-wrap: nowrap;
+  grid-template-columns: var(--label-w) minmax(0, 1fr) auto;
 }
 
 .cost-inputs {
@@ -770,11 +770,6 @@ h1 {
   gap: var(--customer-gap) 18px !important;
 }
 
-.customer-card .field-row label {
-  width: 120px;
-  flex: 0 0 120px;
-}
-
 .customer-card .triple-input {
   grid-template-columns: 100px 1fr 100px;
   gap: 10px;
@@ -784,23 +779,15 @@ h1 {
   gap: 16px;
 }
 
-.customer-card .cust-wide-row label {
-  width: 120px !important;
-  flex: 0 0 120px !important;
-}
-
-.customer-card .cust-wide-row input {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
 .customer-card .check-row {
   align-items: center;
 }
 
-.customer-card .check-row label {
-  width: 135px;
-  flex: 0 0 135px;
+.customer-card .field-row {
+  --label-w: 120px;
+}
+.customer-card .field-row {
+  --label-w: 120px;
 }
 
 .customer-card .field-row,
@@ -866,6 +853,7 @@ h1 {
 
 .item-card .field-row {
   margin-bottom: 0;
+  --label-w: 105px;
 }
 
 .item-card > h2 {
@@ -959,24 +947,16 @@ h1 {
 }
 
 .field-row {
-  display: flex;
+  --label-w: 110px;
+  display: grid;
+  grid-template-columns: var(--label-w) minmax(0, 1fr);
   align-items: center;
   gap: 1px;
   margin-bottom: 14px;
 }
 
-.field-row label {
-  width: 110px;
-  flex: 0 0 110px;
-}
-
-.form-two-col .field-row label {
-  width: 135px;
-  flex: 0 0 135px;
-}
-
-.field-row input[type="text"] {
-  flex: 1;
+.form-two-col .field-row {
+  --label-w: 135px;
 }
 
 .form-col .input-date {
@@ -1055,11 +1035,6 @@ h1 {
   width: 100%;
 }
 
-.item-card .field-row label {
-  width: 105px;
-  flex: 0 0 105px;
-}
-
 .item-card .double-input {
   grid-template-columns: 1fr 1fr;
   gap: 10px;
@@ -1074,6 +1049,18 @@ h1 {
 
 .double-input input[type="text"] {
   width: 100%;
+}
+
+@media (max-width: 1400px) {
+  .card-grid,
+  .price-grid {
+    grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  .content {
+    padding: 22px 24px 36px;
+  }
 }
 
 @media (max-width: 1200px) {
@@ -1091,18 +1078,6 @@ h1 {
 
   .content {
     grid-column: 1 / -1;
-  }
-}
-
-@media (max-width: 1400px) {
-  .card-grid,
-  .price-grid {
-    grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
-    gap: 20px;
-  }
-
-  .content {
-    padding: 22px 24px 36px;
   }
 }
 

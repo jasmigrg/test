@@ -13,6 +13,27 @@
     hidden.addEventListener("change", (e) => sync(e.target.value));
   });
 
+  const equalizeHeights = (selector) => {
+    const items = Array.from(document.querySelectorAll(selector)).filter((el) => {
+      if (el.closest("[hidden]") || el.closest(".collapsed")) return false;
+      return el.offsetParent !== null;
+    });
+    if (!items.length) return;
+    items.forEach((el) => (el.style.height = "auto"));
+    const max = Math.max(...items.map((el) => el.offsetHeight));
+    items.forEach((el) => (el.style.height = max + "px"));
+  };
+
+  const runLayout = () => {
+    equalizeHeights(".inputs-card, .customer-card, .item-card");
+    equalizeHeights(".pricing-info-card, .price-rule-card, .uom-card");
+  };
+
+  const runStabilized = () => {
+    runLayout();
+    requestAnimationFrame(runLayout);
+  };
+
   const section = document.getElementById("priceSection");
   const toggle = section?.querySelector(".collapse-toggle");
   if (toggle) {
@@ -21,6 +42,7 @@
       if (!activePanel) return;
       const collapsed = activePanel.classList.toggle("collapsed");
       toggle.setAttribute("aria-expanded", (!collapsed).toString());
+      runStabilized();
     });
   }
 
@@ -39,62 +61,9 @@
       target?.removeAttribute("hidden");
       target?.classList.remove("collapsed");
       toggle?.setAttribute("aria-expanded", "true");
+      runStabilized();
     });
   });
-
-  const equalizeHeights = (selector) => {
-    const items = Array.from(document.querySelectorAll(selector));
-    if (!items.length) return;
-    items.forEach((el) => (el.style.height = "auto"));
-    const max = Math.max(...items.map((el) => el.offsetHeight));
-    items.forEach((el) => (el.style.height = max + "px"));
-  };
-
-  const runLayout = () => {
-    equalizeHeights(".inputs-card, .customer-card, .item-card");
-    equalizeHeights(".pricing-info-card, .price-rule-card, .uom-card");
-  };
-
-  const debugSizes = () => {
-    const pick = (sel) => document.querySelector(sel);
-    const read = (el) =>
-      el
-        ? {
-            selector: el.className,
-            w: el.offsetWidth,
-            h: el.offsetHeight,
-          }
-        : null;
-
-    const out = {
-      viewport: { w: window.innerWidth, h: window.innerHeight, dpr: window.devicePixelRatio },
-      content: read(pick(".content")),
-      topCards: [
-        read(pick(".inputs-card")),
-        read(pick(".customer-card")),
-        read(pick(".item-card")),
-      ],
-      priceCards: [
-        read(pick(".pricing-info-card")),
-        read(pick(".price-rule-card")),
-        read(pick(".uom-card")),
-      ],
-      grids: {
-        cardGrid: read(pick(".card-grid")),
-        priceGrid: read(pick(".price-grid")),
-        additionalGrid: read(pick(".additional-grid")),
-      },
-    };
-
-    // eslint-disable-next-line no-console
-    console.log("[pricing-ui-debug]", JSON.stringify(out, null, 2));
-  };
-
-  const runStabilized = () => {
-    runLayout();
-    requestAnimationFrame(runLayout);
-    requestAnimationFrame(debugSizes);
-  };
 
   const init = async () => {
     if (document.fonts && document.fonts.ready) {
@@ -112,4 +81,18 @@
     clearTimeout(window.__piResize);
     window.__piResize = setTimeout(runStabilized, 100);
   });
+
+  if (window.ResizeObserver) {
+    let rafId = 0;
+    const ro = new ResizeObserver(() => {
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = 0;
+        runStabilized();
+      });
+    });
+    document
+      .querySelectorAll(".card-grid, .price-grid, .additional-grid")
+      .forEach((el) => ro.observe(el));
+  }
 })();
