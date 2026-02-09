@@ -193,8 +193,8 @@ textarea {
   overflow-x: hidden;
   background: #ffffff;
   width: 100%;
-  max-width: clamp(1100px, 92vw, 1480px);
-  justify-self: center;
+  max-width: none;
+  justify-self: stretch;
 }
 
 .breadcrumb {
@@ -249,10 +249,15 @@ h1 {
 
 .card-grid {
   display: grid;
-  grid-template-columns: minmax(260px, 300px) minmax(0, 1fr) minmax(280px, 320px);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.8fr) minmax(0, 1.1fr);
   gap: 24px;
   align-items: start;
   width: 100%;
+  min-width: 0;
+}
+
+.card-grid > *,
+.price-grid > * {
   min-width: 0;
 }
 
@@ -432,25 +437,23 @@ h1 {
 }
 
 .qbc-info-card .field-row {
+  --label-w: 140px;
   align-items: center;
 }
 
 .qbc-info-card .field-row label {
   font-size: 13px;
-  width: 140px;
-  flex: 0 0 140px;
 }
 
 .qbc-info-card .field-row input {
   max-width: 120px;
-  flex: 0 0 120px;
 }
 .collapse-toggle[aria-expanded="false"] .collapse-arrow {
   transform: rotate(180deg);
 }
 .price-grid {
   display: grid;
-  grid-template-columns: minmax(260px, 300px) minmax(0, 1fr) minmax(280px, 320px);
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.8fr) minmax(0, 1.1fr);
   gap: 24px;
   align-items: start;
   width: 100%;
@@ -462,6 +465,15 @@ h1 {
   background: rgba(217, 217, 217, 0.15);
   border-radius: 15px;
   width: 100%;
+  min-width: 0;
+}
+
+.card,
+.read-card,
+.inputs-card,
+.customer-card,
+.item-card,
+.govt-card {
   min-width: 0;
 }
 
@@ -477,7 +489,7 @@ h1 {
 
 
 .price-grid .read-card .check-row {
-  align-items: center;
+  --label-w: 120px;
 }
 
 .price-grid .read-card .check-row input {
@@ -515,38 +527,46 @@ h1 {
   gap: 21px !important;
 }
 
-.inline-check-row {
+/* Price Rule inline rows (single source of truth) */
+.price-rule-card .field-row.inline-check-row {
+  --label-w: 120px;
   display: grid;
-  grid-template-columns: 110px minmax(0, 180px) minmax(0, 1fr);
-  gap: 16px;
+  grid-template-columns: var(--label-w) 180px minmax(0, 1fr);
+  gap: 1px;
   align-items: center;
+  min-width: 0;
 }
 
-.inline-check-row > label {
-  width: auto;
-  flex: none;
-}
-
-.inline-check-row .check-row {
-  margin: 0;
+.price-rule-card .field-row.inline-check-row .check-row {
   display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  min-width: 0;
+  margin-left: 16px;
+}
+
+.price-rule-card .field-row.inline-check-row .pr-short {
+  width: 100%;
+  max-width: 180px;
+  min-width: 0;
+}
+
+.price-rule-card .field-row.inline-check-row .check-row label {
+  width: auto;
+  flex: 0 0 auto;
+  max-width: none;
+}
+
+.cost-row {
+  display: grid;
+  grid-template-columns: var(--label-w) minmax(0, 1fr);
   align-items: center;
   gap: 8px;
 }
 
-.pr-short {
-  max-width: 180px;
-  flex: 0 0 180px;
-}
-
-.inline-check-row .check-row {
-  padding-left: 24px;
-}
-
-.cost-row {
-  align-items: center;
-  flex-wrap: nowrap;
-  grid-template-columns: var(--label-w) minmax(0, 1fr) auto;
+.cost-row.has-action {
+  grid-template-columns: var(--label-w) minmax(0, 1fr) max-content;
 }
 
 .cost-inputs {
@@ -555,56 +575,18 @@ h1 {
   gap: 6px;
   flex: 1;
   min-width: 0;
-}
-
-.load-inputs {
-  grid-template-columns: 80px 56px;
-  max-width: 150px;
-}
-
-.rebate-col .load-inputs {
-  grid-template-columns: 70px 83px;
-  max-width: 145px;
+  width: 100%;
 }
 
 .qbc-row {
   align-items: center;
 }
 
-.qbc-inputs {
-  grid-template-columns: 40px 40px;
-  gap: 6px;
-  max-width: 80px;
-  flex: 0 0 80px;
-}
 
 .qbc-row .ghost-btn {
   text-align: center;
 }
 
-.pricing-qbc-row {
-  gap: 5px;
-}
-
-.pricing-qbc-row .ghost-btn {
-  margin-left: 0;
-  width: 64px;
-}
-
-.pricing-qbc-row .qbc-inputs {
-  grid-template-columns: 40px 30px;
-  max-width: 76px;
-  flex: 0 0 76px;
-}
-
-.rebate-qbc-row {
-  gap: 0;
-}
-
-.rebate-qbc-row .ghost-btn {
-  margin-left: 8px;
-  width: 70px;
-}
 
 .cost-small {
   max-width: none;
@@ -666,7 +648,6 @@ h1 {
   color: #2c2c2c;
   padding: 7px 10px;
   border-radius: 6px;
-  font-weight: 600;
   cursor: pointer;
 }
 
@@ -685,18 +666,25 @@ h1 {
   font-weight: 600;
   cursor: pointer;
 }
-.price-rule-card .form-col > .field-row input.readonly-field {
-  max-width: 180px;
-  flex: 0 0 180px;
+/* removed duplicate price-rule inline-check-row overrides */
+
+.pricing-info-card {
+  --pi-field-w: clamp(200px, 20vw, 260px);
+}
+
+.pricing-info-card .form-col > .field-row {
+  grid-template-columns: var(--label-w) minmax(0, var(--pi-field-w));
+  gap: 1px;
 }
 
 .pricing-info-card .form-col > .field-row input.readonly-field {
-  max-width: 140px;
-  flex: 0 0 300px;
+  width: 100%;
+  max-width: 100%;
 }
 
 .pricing-info-card .double-input {
-  max-width: 300px;
+  width: 100%;
+  max-width: 100%;
   gap: 10px;
 }
 
@@ -704,16 +692,12 @@ h1 {
 
 .level-row {
   align-items: flex-start;
-}
-
-.level-row label {
-  width: 120px;
-  flex: 0 0 120px;
+  min-width: 0;
 }
 
 .level-inputs {
   display: grid;
-  grid-template-columns: 80px 1fr;
+  grid-template-columns: 80px minmax(0, 1fr);
   gap: 10px;
   flex: 1;
   min-width: 0;
@@ -751,7 +735,7 @@ h1 {
 .customer-card {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: stretch;
   padding: 26px 18px 36px;
   border-radius: 15px;
   background: rgba(217, 217, 217, 0.15);
@@ -768,32 +752,50 @@ h1 {
 .customer-card .form-two-col {
   margin-top: 0 !important;
   gap: var(--customer-gap) 18px !important;
+  width: 100%;
 }
 
 .customer-card .triple-input {
-  grid-template-columns: 100px 1fr 100px;
+  grid-template-columns: minmax(90px, 110px) minmax(0, 1fr) minmax(90px, 110px);
   gap: 10px;
+  min-width: 0;
 }
 
 .customer-card .cust-wide-row {
-  gap: 16px;
+  gap: 0;
 }
 
 .customer-card .check-row {
+  --label-w: 120px;
+}
+
+.customer-card .field-row {
+  --label-w: 120px;
+  margin-bottom: 0;
+}
+
+.customer-card .field-check {
+  --label-w: 120px;
+  display: grid;
+  grid-template-columns: var(--label-w) minmax(0, 1fr);
   align-items: center;
+  gap: 8px;
 }
 
-.customer-card .field-row {
-  --label-w: 120px;
-}
-.customer-card .field-row {
-  --label-w: 120px;
+.customer-card .field-check input {
+  justify-self: start;
 }
 
-.customer-card .field-row,
-.customer-card .check-row {
-  margin-bottom: 0 !important;
+.customer-card .triple-input,
+.customer-card .double-input {
+  padding-left: 0;
+  min-width: 0;
 }
+
+.customer-card .cust-grid {
+  width: 100%;
+}
+
 
 .item-card {
   display: flex;
@@ -933,6 +935,8 @@ h1 {
 .readonly-field {
   background: #e7eaec !important;
   color: #2c2c2c;
+  border: 1px solid var(--line);
+  height: 28px;
 }
 
 .primary {
@@ -955,6 +959,12 @@ h1 {
   margin-bottom: 14px;
 }
 
+.field-row > *,
+.cost-row > *,
+.inline-check-row > * {
+  min-width: 0;
+}
+
 .form-two-col .field-row {
   --label-w: 135px;
 }
@@ -969,46 +979,79 @@ h1 {
 
 .wide-input input[type="text"] {
   width: 100%;
+  border: 1px solid var(--line);
+  height: 28px;
 }
 
 .triple-input {
   flex: 1;
   display: grid;
-  grid-template-columns: 110px 1fr 110px;
+  grid-template-columns: minmax(90px, 110px) minmax(0, 1fr) minmax(90px, 110px);
   gap: 8px;
+  min-width: 0;
 }
 
 .triple-input input[type="text"] {
   width: 100%;
 }
 
-.form-two-col {
+.cust-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 10px 18px;
 }
 
-.form-two-col label {
-  font-size: 12px;
+.cust-grid label {
+  font-size: 13px;
   color: #3f454a;
+  line-height: 1.2;
 }
 
+
 .check-row {
-  display: flex;
+  --label-w: 110px;
+  display: grid;
+  grid-template-columns: var(--label-w) minmax(0, 1fr);
   align-items: center;
   gap: 8px;
   font-size: 12px;
   color: #3f454a;
 }
 
+.field-check {
+  --label-w: 110px;
+  display: grid;
+  grid-template-columns: var(--label-w) minmax(0, 1fr);
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #3f454a;
+}
+
+.field-check input {
+  justify-self: start;
+}
+
 .check-row input {
   accent-color: var(--teal);
+  justify-self: start;
 }
 
 .chk {
   width: 16px;
   height: 16px;
   accent-color: var(--teal);
+}
+
+/* Read-only checkboxes (visual + interaction) */
+.customer-card input[type="checkbox"],
+.item-card input[type="checkbox"],
+.price-rule-card input[type="checkbox"],
+.pricing-cost-card input[type="checkbox"],
+.rebate-cost-card input[type="checkbox"] {
+  pointer-events: none;
+  cursor: default;
+  opacity: 0.7;
 }
 
 .item-inline-row {
@@ -1054,7 +1097,7 @@ h1 {
 @media (max-width: 1400px) {
   .card-grid,
   .price-grid {
-    grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
     gap: 20px;
   }
 
@@ -1096,4 +1139,49 @@ h1 {
   .content {
     padding: 20px 20px 32px;
   }
+}
+
+/* Pricing + Rebate cost cards (stable shrink-safe grid) */
+.pricing-cost-card .field-row,
+.pricing-cost-card .cost-row,
+.rebate-cost-card .rebate-col:first-child .field-row,
+.rebate-cost-card .rebate-col:first-child .cost-row {
+  grid-template-columns: var(--label-w) minmax(0, 1fr);
+  gap: 8px;
+  min-width: 0;
+}
+
+.pricing-cost-card .field-row.has-action,
+.pricing-cost-card .cost-row.has-action,
+.rebate-cost-card .rebate-col:first-child .field-row.has-action,
+.rebate-cost-card .rebate-col:first-child .cost-row.has-action {
+  grid-template-columns: var(--label-w) minmax(0, 1fr) max-content;
+}
+
+.pricing-cost-card .field-row.has-action .cost-inputs,
+.pricing-cost-card .cost-row.has-action .cost-inputs,
+.rebate-cost-card .rebate-col:first-child .field-row.has-action .cost-inputs,
+.rebate-cost-card .rebate-col:first-child .cost-row.has-action .cost-inputs {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.pricing-cost-card .field-row.has-action .ghost-btn,
+.pricing-cost-card .cost-row.has-action .ghost-btn,
+.rebate-cost-card .rebate-col:first-child .field-row.has-action .ghost-btn,
+.rebate-cost-card .rebate-col:first-child .cost-row.has-action .ghost-btn {
+  justify-self: start;
+  margin-left: 0;
+}
+
+.pricing-cost-card .load-inputs,
+.rebate-cost-card .rebate-col:first-child .load-inputs {
+  grid-template-columns: minmax(0, 1fr) 56px;
+  max-width: none;
+}
+
+.pricing-cost-card .qbc-inputs,
+.rebate-cost-card .rebate-col:first-child .qbc-inputs {
+  grid-template-columns: minmax(0, 1fr) 32px;
+  max-width: none;
 }

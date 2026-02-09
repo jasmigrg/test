@@ -113,7 +113,7 @@
 
         <div class="card customer-card">
           <h2>Customer Information</h2>
-          <div class="form-two-col">
+          <div class="cust-grid">
             <div class="span-2">
               <div class="field-row wide-input">
                 <label>Customer Name</label>
@@ -140,57 +140,42 @@
                 </div>
               </div>
             </div>
-            <div>
-              <div class="field-row cust-wide-row">
-                <label>Segment</label>
-                <input class="readonly-field" type="text" readonly />
-              </div>
+            <div class="field-row cust-wide-row">
+              <label>Segment</label>
+              <input class="readonly-field" type="text" readonly />
             </div>
-            <div>
-              <div class="field-row cust-wide-row">
-                <label>Cluster</label>
-                <input class="readonly-field" type="text" readonly />
-              </div>
+            <div class="field-row cust-wide-row">
+              <label>Cluster</label>
+              <input class="readonly-field" type="text" readonly />
             </div>
-            <div>
-              <div class="field-row cust-wide-row">
-                <label>Market</label>
-                <input class="readonly-field" type="text" readonly />
-              </div>
+            <div class="field-row cust-wide-row">
+              <label>Market</label>
+              <input class="readonly-field" type="text" readonly />
             </div>
-            <div>
-              <div class="field-row cust-wide-row">
-                <label>FSS Grp</label>
-                <input class="readonly-field" type="text" readonly />
-              </div>
+            <div class="field-row cust-wide-row">
+              <label>FSS Grp</label>
+              <input class="readonly-field" type="text" readonly />
             </div>
-            <div class="check-row">
+            <div class="field-check">
               <label>Bill to Pricing</label>
-              <input type="checkbox" checked />
+              <input class="chk" type="checkbox" checked />
             </div>
-            <div>
-              <div class="field-row cust-wide-row">
-                <label>FSS Type</label>
-                <input class="readonly-field" type="text" readonly />
-              </div>
+            <div class="field-row cust-wide-row">
+              <label>FSS Type</label>
+              <input class="readonly-field" type="text" readonly />
             </div>
-            <div class="check-row">
+            <div class="field-check">
               <label>Multi Bill to PRCA</label>
-              <input type="checkbox" checked />
+              <input class="chk" type="checkbox" checked />
             </div>
-            <div>
-              <div class="field-row cust-wide-row">
-                <label>Government<br />Department</label>
-                <input class="readonly-field" type="text" readonly />
-              </div>
+            <div class="field-row cust-wide-row">
+              <label>Government<br />Department</label>
+              <input class="readonly-field" type="text" readonly />
             </div>
-            <div>
-              <div class="field-row cust-wide-row">
-                <label>Primary GPO<br />Affiliation</label>
-                <input class="readonly-field" type="text" readonly />
-              </div>
+            <div class="field-row cust-wide-row">
+              <label>Primary GPO<br />Affiliation</label>
+              <input class="readonly-field" type="text" readonly />
             </div>
-            <div></div>
           </div>
         </div>
 
@@ -291,7 +276,7 @@
                   <label>Markup%</label>
                   <input class="readonly-field pr-short" type="text" readonly />
                   <div class="check-row">
-                    <label>Apply Loads to Pricing Cost</label>
+                    <label>Apply Loads to<br />Pricing Cost</label>
                     <input class="chk" type="checkbox" checked />
                   </div>
                 </div>
@@ -315,7 +300,7 @@
               </div>
             </div>
 
-            <div class="card read-card">
+            <div class="card read-card pricing-cost-card">
               <h2>Pricing Cost Information</h2>
               <div class="form-col">
                 <div class="field-row"><label>Pricing Cost</label><input class="readonly-field" type="text" readonly /></div>
@@ -331,8 +316,8 @@
                 <div class="field-row"><label>Vendor Contract ID</label><input class="readonly-field" type="text" readonly /></div>
                 <div class="field-row"><label>Contract Type</label><input class="readonly-field" type="text" readonly /></div>
                 <div class="field-row"><label>GPO Number/<br />Name</label><input class="readonly-field" type="text" readonly /></div>
-                <div class="check-row"><label>QBC</label><input class="chk" type="checkbox" checked /></div>
-                <div class="field-row cost-row qbc-row pricing-qbc-row">
+                <div class="field-check"><label>QBC</label><input class="chk" type="checkbox" checked /></div>
+                <div class="field-row cost-row qbc-row pricing-qbc-row has-action">
                   <label>Lower Cost QBC</label>
                   <div class="cost-inputs qbc-inputs">
                     <input class="readonly-field" type="text" readonly />
@@ -343,7 +328,7 @@
               </div>
             </div>
 
-            <div class="card read-card">
+            <div class="card read-card rebate-cost-card">
               <h2>Rebate Cost Information</h2>
               <div class="rebate-grid">
                 <div class="rebate-col form-col">
@@ -360,8 +345,8 @@
                   <div class="field-row"><label>Vendor Contract ID</label><input class="readonly-field" type="text" readonly /></div>
                   <div class="field-row"><label>Contract Type</label><input class="readonly-field" type="text" readonly /></div>
                   <div class="field-row"><label>GPO Number/<br />Name</label><input class="readonly-field" type="text" readonly /></div>
-                  <div class="check-row"><label>QBC</label><input class="chk" type="checkbox" checked /></div>
-                  <div class="field-row cost-row qbc-row rebate-qbc-row">
+                  <div class="field-check"><label>QBC</label><input class="chk" type="checkbox" checked /></div>
+                  <div class="field-row cost-row qbc-row rebate-qbc-row has-action">
                     <label>Lower Cost QBC</label>
                     <div class="cost-inputs qbc-inputs">
                       <input class="readonly-field" type="text" readonly />

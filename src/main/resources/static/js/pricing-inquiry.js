@@ -42,7 +42,7 @@
       if (!activePanel) return;
       const collapsed = activePanel.classList.toggle("collapsed");
       toggle.setAttribute("aria-expanded", (!collapsed).toString());
-      runStabilized();
+      requestAnimationFrame(runStabilized);
     });
   }
 
@@ -61,7 +61,7 @@
       target?.removeAttribute("hidden");
       target?.classList.remove("collapsed");
       toggle?.setAttribute("aria-expanded", "true");
-      runStabilized();
+      requestAnimationFrame(runStabilized);
     });
   });
 
