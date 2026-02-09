@@ -249,8 +249,8 @@ h1 {
 
 .card-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.8fr) minmax(0, 1.1fr);
-  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+  gap: 16px;
   align-items: start;
   width: 100%;
   min-width: 0;
@@ -453,8 +453,8 @@ h1 {
 }
 .price-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.8fr) minmax(0, 1.1fr);
-  gap: 24px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
+  gap: 16px;
   align-items: start;
   width: 100%;
   min-width: 0;
@@ -668,12 +668,8 @@ h1 {
 }
 /* removed duplicate price-rule inline-check-row overrides */
 
-.pricing-info-card {
-  --pi-field-w: clamp(200px, 20vw, 260px);
-}
-
 .pricing-info-card .form-col > .field-row {
-  grid-template-columns: var(--label-w) minmax(0, var(--pi-field-w));
+  grid-template-columns: var(--label-w) minmax(0, 1fr);
   gap: 1px;
 }
 
@@ -1094,7 +1090,7 @@ h1 {
   width: 100%;
 }
 
-@media (max-width: 1400px) {
+@media (max-width: 1200px) {
   .card-grid,
   .price-grid {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
@@ -1103,24 +1099,6 @@ h1 {
 
   .content {
     padding: 22px 24px 36px;
-  }
-}
-
-@media (max-width: 1200px) {
-  .card-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .sidebar {
-    display: none;
-  }
-
-  .app-shell {
-    grid-template-columns: 1fr;
-  }
-
-  .content {
-    grid-column: 1 / -1;
   }
 }
 
@@ -1138,6 +1116,18 @@ h1 {
 
   .content {
     padding: 20px 20px 32px;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .content {
+    grid-column: 1 / -1;
   }
 }
 
@@ -1185,3 +1175,28 @@ h1 {
   grid-template-columns: minmax(0, 1fr) 32px;
   max-width: none;
 }
+
+/* Align single-value inputs across Pricing/ Rebate left columns */
+.pricing-cost-card,
+.rebate-cost-card {
+  --pc-field-w: clamp(220px, 22vw, 320px);
+}
+
+.pricing-cost-card .form-col > .field-row:not(.cost-row) > input.readonly-field,
+.rebate-cost-card .rebate-col:first-child .field-row:not(.cost-row) > input.readonly-field {
+  max-width: var(--pc-field-w);
+  width: 100%;
+}
+
+.pricing-cost-card .cost-row .cost-inputs,
+.rebate-cost-card .rebate-col:first-child .cost-row .cost-inputs {
+  max-width: var(--pc-field-w);
+  width: 100%;
+}
+
+/* Prevent button label wrapping */
+.ghost-outline,
+.ghost-btn {
+  white-space: nowrap;
+}
+/* ---- END Rebate Cost card alignment ---- */
