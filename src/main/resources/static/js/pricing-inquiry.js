@@ -55,9 +55,61 @@
     equalizeHeights(".pricing-info-card, .price-rule-card, .uom-card");
   };
 
-  window.addEventListener("load", runLayout);
+  const debugSizes = () => {
+    const pick = (sel) => document.querySelector(sel);
+    const read = (el) =>
+      el
+        ? {
+            selector: el.className,
+            w: el.offsetWidth,
+            h: el.offsetHeight,
+          }
+        : null;
+
+    const out = {
+      viewport: { w: window.innerWidth, h: window.innerHeight, dpr: window.devicePixelRatio },
+      content: read(pick(".content")),
+      topCards: [
+        read(pick(".inputs-card")),
+        read(pick(".customer-card")),
+        read(pick(".item-card")),
+      ],
+      priceCards: [
+        read(pick(".pricing-info-card")),
+        read(pick(".price-rule-card")),
+        read(pick(".uom-card")),
+      ],
+      grids: {
+        cardGrid: read(pick(".card-grid")),
+        priceGrid: read(pick(".price-grid")),
+        additionalGrid: read(pick(".additional-grid")),
+      },
+    };
+
+    // eslint-disable-next-line no-console
+    console.log("[pricing-ui-debug]", JSON.stringify(out, null, 2));
+  };
+
+  const runStabilized = () => {
+    runLayout();
+    requestAnimationFrame(runLayout);
+    requestAnimationFrame(debugSizes);
+  };
+
+  const init = async () => {
+    if (document.fonts && document.fonts.ready) {
+      try {
+        await document.fonts.ready;
+      } catch (e) {
+        // ignore font readiness errors
+      }
+    }
+    runStabilized();
+  };
+
+  window.addEventListener("load", init);
   window.addEventListener("resize", () => {
     clearTimeout(window.__piResize);
-    window.__piResize = setTimeout(runLayout, 100);
+    window.__piResize = setTimeout(runStabilized, 100);
   });
 })();
