@@ -11,9 +11,9 @@
 </head>
 <body>
   <div class="app-shell">
-    <#include "partials/header.ftl">
+    <#include "/components/header.ftl">
 
-    <#include "partials/sidebar.ftl">
+    <#include "/components/sidebar.ftl">
 
     <main class="content">
       <div class="breadcrumb"><a class="crumb-link" href="${ctx}/">Home</a> / Pricing Inquiry</div>

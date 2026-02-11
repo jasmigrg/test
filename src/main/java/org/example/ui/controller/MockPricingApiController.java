@@ -1,13 +1,12 @@
-package org.example.ui.controller;
-
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+package com.example.pricing.ui;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class MockPricingApiController {
@@ -71,11 +70,11 @@ public class MockPricingApiController {
     // Price Breakdown - Pricing Info
     put(root, "priceBreakdown.pricingInfo.sellPrice", itemIdx == 2 ? "18.20" : itemIdx == 3 ? "12.40" : "24.50");
     put(root, "priceBreakdown.pricingInfo.compMargin", "5.2%"
-        );
+    );
     put(root, "priceBreakdown.pricingInfo.pricingMargin", "7.8%"
-        );
+    );
     put(root, "priceBreakdown.pricingInfo.costPlus", "3.0%"
-        );
+    );
     put(root, "priceBreakdown.pricingInfo.govtListPrice", itemIdx == 2 ? "19.50" : itemIdx == 3 ? "13.10" : "26.00");
     put(root, "priceBreakdown.pricingInfo.lastPricePaid", itemIdx == 2 ? "17.80" : itemIdx == 3 ? "12.00" : "23.75");
     put(root, "priceBreakdown.pricingInfo.ceilingPrice", itemIdx == 2 ? "19.00" : itemIdx == 3 ? "12.80" : "25.00");
@@ -88,7 +87,7 @@ public class MockPricingApiController {
     put(root, "priceBreakdown.priceRule.type", "Contract");
     put(root, "priceBreakdown.priceRule.shipToPricing", true);
     put(root, "priceBreakdown.priceRule.markup", "2.5%"
-        );
+    );
     put(root, "priceBreakdown.priceRule.applyLoadsToPricingCost", true);
     put(root, "priceBreakdown.priceRule.reasonCode", "RC-07");
     put(root, "priceBreakdown.priceRule.notes", "Primary contract rule");
@@ -99,52 +98,52 @@ public class MockPricingApiController {
     put(root, "priceBreakdown.uomDifferential.exists", "Yes");
     put(root, "priceBreakdown.uomDifferential.applied", "Yes");
     put(root, "priceBreakdown.uomDifferential.notAppliedReason", ""
-        );
+    );
     put(root, "priceBreakdown.uomDifferential.uniqueId", "UOM-778");
     put(root, "priceBreakdown.uomDifferential.percent", "1.5%"
-        );
+    );
     put(root, "priceBreakdown.uomDifferential.amount", "0.35"
-        );
+    );
     put(root, "priceBreakdown.uomDifferential.appliedAmount", "0.35"
-        );
+    );
 
     // Price Breakdown - Pricing Cost
     put(root, "priceBreakdown.pricingCost.pricingCost", "19.40");
     put(root, "priceBreakdown.pricingCost.loadAmtValue", "0.40");
     put(root, "priceBreakdown.pricingCost.loadAmtPct", "2%"
-        );
+    );
     put(root, "priceBreakdown.pricingCost.initialCostPricing", "19.00");
     put(root, "priceBreakdown.pricingCost.priceListId", "PL-551"
-        );
+    );
     put(root, "priceBreakdown.pricingCost.vendorContractId", "VC-314"
-        );
+    );
     put(root, "priceBreakdown.pricingCost.contractType", "GPO"
-        );
+    );
     put(root, "priceBreakdown.pricingCost.gpoNumberName", "VZ-101 / Vizient"
-        );
+    );
     put(root, "priceBreakdown.pricingCost.qbc", true);
     put(root, "priceBreakdown.pricingCost.lowerCostQbcValue", "0.10");
     put(root, "priceBreakdown.pricingCost.lowerCostQbcPct", "1%"
-        );
+    );
 
     // Price Breakdown - Rebate Cost
     put(root, "priceBreakdown.rebateCost.compCost", "0.75");
     put(root, "priceBreakdown.rebateCost.loadAmtValue", "0.15");
     put(root, "priceBreakdown.rebateCost.loadAmtPct", "1%"
-        );
+    );
     put(root, "priceBreakdown.rebateCost.initialCostRebate", "0.60");
     put(root, "priceBreakdown.rebateCost.costListId", "CL-220"
-        );
+    );
     put(root, "priceBreakdown.rebateCost.vendorContractId", "VC-314"
-        );
+    );
     put(root, "priceBreakdown.rebateCost.contractType", "Rebate"
-        );
+    );
     put(root, "priceBreakdown.rebateCost.gpoNumberName", "VZ-101 / Vizient"
-        );
+    );
     put(root, "priceBreakdown.rebateCost.qbc", true);
     put(root, "priceBreakdown.rebateCost.lowerCostQbcValue", "0.05");
     put(root, "priceBreakdown.rebateCost.lowerCostQbcPct", "0.5%"
-        );
+    );
     put(root, "priceBreakdown.rebateCost.marginFunding", "0.30");
     put(root, "priceBreakdown.rebateCost.rebatableUsed", true);
     put(root, "priceBreakdown.rebateCost.rebatableCost", "0.55");
