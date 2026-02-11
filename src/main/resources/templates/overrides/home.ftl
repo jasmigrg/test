@@ -11,9 +11,10 @@
 </head>
 <body>
   <div class="app-shell">
-    <#include "partials/header.ftl">
+    <#include "components/header.ftl">
 
-    <#include "partials/sidebar.ftl">
+    <#include "/components/sidebar.ftl">
+    <@navigation currentPath="/" />
 
     <main class="content">
       <div class="breadcrumb">Home</div>
@@ -28,5 +29,6 @@
       </div>
     </main>
   </div>
+  <script src="${ctx}/js/sidebar.js?v=1"></script>
 </body>
 </html>

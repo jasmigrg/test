@@ -14,6 +14,7 @@
     <#include "/components/header.ftl">
 
     <#include "/components/sidebar.ftl">
+    <@navigation currentPath="/pricing-inquiry" />
 
     <main class="content">
       <div class="breadcrumb"><a class="crumb-link" href="${ctx}/">Home</a> / Pricing Inquiry</div>
@@ -615,6 +616,7 @@
   <script>
     window.__ctx = "${ctx}";
   </script>
+  <script src="${ctx}/js/sidebar.js?v=1"></script>
   <script src="${ctx}/js/pricing-inquiry.js?v=1"></script>
 </body>
 </html>

@@ -1191,7 +1191,7 @@ h1 {
 
 .pricing-cost-card .qbc-inputs,
 .rebate-cost-card .rebate-col:first-child .qbc-inputs {
-  grid-template-columns: minmax(0, 1fr) 32px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   max-width: none;
 }
 

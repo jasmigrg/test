@@ -1,4 +1,4 @@
-package com.example.pricing.ui;
+package com.example.pricing.controller.ui;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -14,17 +14,19 @@ public class MockPricingApiController {
   private static final DateTimeFormatter ISO_DATE = DateTimeFormatter.ISO_LOCAL_DATE;
 
   @GetMapping("/api/pricing-inquiry")
-  public Map<String, Object> pricingInquiry(@RequestParam(required = false) String itemNumber) {
+  public Map<String, Object> pricingInquiry(
+          @RequestParam(required = false) String itemNumber,
+          @RequestParam(required = false) String priceDate) {
     String item = (itemNumber == null || itemNumber.isBlank()) ? "10001" : itemNumber.trim();
-    return buildMock(item);
+    return buildMock(item, priceDate);
   }
 
-  private Map<String, Object> buildMock(String itemNumber) {
+  private Map<String, Object> buildMock(String itemNumber, String priceDate) {
     if (!itemNumber.equals("10001") && !itemNumber.equals("10002") && !itemNumber.equals("10003")) {
       return Map.of("error", "Item not found");
     }
     Map<String, Object> root = new LinkedHashMap<>();
-    LocalDate today = LocalDate.now();
+    LocalDate date = parseDate(priceDate);
     int itemIdx = itemNumber.equals("10002") ? 2 : itemNumber.equals("10003") ? 3 : 1;
 
     // Inputs
@@ -33,8 +35,8 @@ public class MockPricingApiController {
     put(root, "inputs.catNumber", itemIdx == 2 ? "CAT-6630" : itemIdx == 3 ? "CAT-7710" : "CAT-8821");
     put(root, "inputs.orderQty", itemIdx == 3 ? "2" : "1");
     put(root, "inputs.uom", itemIdx == 2 ? "BX" : "EA");
-    put(root, "inputs.priceDate", today.format(DISPLAY_DATE));
-    put(root, "inputs.priceDateIso", today.format(ISO_DATE));
+    put(root, "inputs.priceDate", date.format(DISPLAY_DATE));
+    put(root, "inputs.priceDateIso", date.format(ISO_DATE));
 
     // Customer
     put(root, "customer.name", itemIdx == 2 ? "Northlake Medical" : itemIdx == 3 ? "City General" : "Parkview Health");
@@ -68,17 +70,22 @@ public class MockPricingApiController {
     put(root, "item.productCategory2", "Disposable");
 
     // Price Breakdown - Pricing Info
-    put(root, "priceBreakdown.pricingInfo.sellPrice", itemIdx == 2 ? "18.20" : itemIdx == 3 ? "12.40" : "24.50");
+    put(root, "priceBreakdown.pricingInfo.sellPrice",
+            adjustByDate(itemIdx == 2 ? 18.20 : itemIdx == 3 ? 12.40 : 24.50, date));
     put(root, "priceBreakdown.pricingInfo.compMargin", "5.2%"
     );
     put(root, "priceBreakdown.pricingInfo.pricingMargin", "7.8%"
     );
     put(root, "priceBreakdown.pricingInfo.costPlus", "3.0%"
     );
-    put(root, "priceBreakdown.pricingInfo.govtListPrice", itemIdx == 2 ? "19.50" : itemIdx == 3 ? "13.10" : "26.00");
-    put(root, "priceBreakdown.pricingInfo.lastPricePaid", itemIdx == 2 ? "17.80" : itemIdx == 3 ? "12.00" : "23.75");
-    put(root, "priceBreakdown.pricingInfo.ceilingPrice", itemIdx == 2 ? "19.00" : itemIdx == 3 ? "12.80" : "25.00");
-    put(root, "priceBreakdown.pricingInfo.floorPrice", itemIdx == 2 ? "16.90" : itemIdx == 3 ? "11.90" : "22.50");
+    put(root, "priceBreakdown.pricingInfo.govtListPrice",
+            adjustByDate(itemIdx == 2 ? 19.50 : itemIdx == 3 ? 13.10 : 26.00, date));
+    put(root, "priceBreakdown.pricingInfo.lastPricePaid",
+            adjustByDate(itemIdx == 2 ? 17.80 : itemIdx == 3 ? 12.00 : 23.75, date));
+    put(root, "priceBreakdown.pricingInfo.ceilingPrice",
+            adjustByDate(itemIdx == 2 ? 19.00 : itemIdx == 3 ? 12.80 : 25.00, date));
+    put(root, "priceBreakdown.pricingInfo.floorPrice",
+            adjustByDate(itemIdx == 2 ? 16.90 : itemIdx == 3 ? 11.90 : 22.50, date));
 
     // Price Breakdown - Price Rule
     put(root, "priceBreakdown.priceRule.id", "PR-8891");
@@ -293,6 +300,22 @@ public class MockPricingApiController {
     put(root, "govtLimits.govtListPrice.buy", "xx.xxxxx");
 
     return root;
+  }
+
+  private LocalDate parseDate(String priceDate) {
+    if (priceDate == null || priceDate.isBlank()) {
+      return LocalDate.now();
+    }
+    try {
+      return LocalDate.parse(priceDate, ISO_DATE);
+    } catch (Exception ignored) {
+      return LocalDate.now();
+    }
+  }
+
+  private String adjustByDate(double base, LocalDate date) {
+    double delta = (date.getDayOfMonth() % 2 == 0) ? 0.15 : -0.10;
+    return String.format("%.2f", base + delta);
   }
 
   @SuppressWarnings("unchecked")

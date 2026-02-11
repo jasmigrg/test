@@ -101,9 +101,26 @@
     });
   };
 
-  const fetchPricingData = async (itemNumber) => {
+  const clearDataFields = (keepKeys = []) => {
+    document.querySelectorAll("[data-field]").forEach((el) => {
+      const key = el.getAttribute("data-field");
+      if (keepKeys.includes(key)) return;
+      if (el.type === "checkbox" || el.type === "radio") {
+        el.checked = false;
+        return;
+      }
+      el.value = "";
+    });
+  };
+
+  const fetchPricingData = async (itemNumber, priceDate) => {
     const ctx = window.__ctx || "";
-    const url = `${ctx}/api/pricing-inquiry?itemNumber=${encodeURIComponent(itemNumber || "")}`;
+    const params = new URLSearchParams();
+    params.set("itemNumber", itemNumber || "");
+    if (priceDate) {
+      params.set("priceDate", priceDate);
+    }
+    const url = `${ctx}/api/pricing-inquiry?${params.toString()}`;
     const res = await fetch(url, { headers: { Accept: "application/json" } });
     if (!res.ok) throw new Error("Mock API failed");
     return res.json();
@@ -116,31 +133,60 @@
   const getPriceBtn = document.querySelector(".inputs-card .primary");
   const clearBtn = document.querySelector('[data-action="clear"]');
   const itemError = document.querySelector('[data-role="item-error"]');
+  const priceDateInput = document.querySelector('[data-field="inputs.priceDateIso"]');
 
   if (itemInput) {
+    let lastItem = "";
     const handleItem = async () => {
       const itemNumber = itemInput.value.trim();
       if (!itemNumber) {
         if (itemError) itemError.hidden = true;
         return;
       }
+      if (itemNumber === lastItem) return;
       try {
-        const data = await fetchPricingData(itemNumber);
+        const data = await fetchPricingData(itemNumber, priceDateInput?.value);
+        if (data && data.error) {
+          if (itemError) itemError.hidden = false;
+          clearDataFields(["inputs.itemNumber"]);
+          return;
+        }
+        if (itemError) itemError.hidden = true;
+        cachedData = data;
+        applyData(data, inputsScope);
+        lastItem = itemNumber;
+      } catch (e) {
+        // ignore for mock failures
+      }
+    };
+    itemInput.addEventListener("blur", handleItem);
+    itemInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        handleItem();
+      }
+    });
+    itemInput.addEventListener("input", () => {
+      if (itemError) itemError.hidden = true;
+    });
+  }
+
+  if (priceDateInput) {
+    priceDateInput.addEventListener("change", async () => {
+      const itemNumber = itemInput?.value?.trim() || "";
+      if (!itemNumber) return;
+      try {
+        const data = await fetchPricingData(itemNumber, priceDateInput.value);
         if (data && data.error) {
           if (itemError) itemError.hidden = false;
           return;
         }
         if (itemError) itemError.hidden = true;
         cachedData = data;
-        applyData(data, inputsScope);
+        applyData(data);
       } catch (e) {
         // ignore for mock failures
       }
-    };
-    itemInput.addEventListener("change", handleItem);
-    itemInput.addEventListener("blur", handleItem);
-    itemInput.addEventListener("input", () => {
-      if (itemError) itemError.hidden = true;
     });
   }
 
@@ -148,9 +194,10 @@
     getPriceBtn.addEventListener("click", async () => {
       const itemNumber = itemInput?.value?.trim() || "";
       try {
-        const data = cachedData || (await fetchPricingData(itemNumber));
+        const data = cachedData || (await fetchPricingData(itemNumber, priceDateInput?.value));
         if (data && data.error) {
           if (itemError) itemError.hidden = false;
+          clearDataFields(["inputs.itemNumber"]);
           return;
         }
         if (itemError) itemError.hidden = true;
