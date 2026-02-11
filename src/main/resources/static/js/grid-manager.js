@@ -581,6 +581,11 @@ const GridManager = {
             }
         }
 
+        // Re-attach sort listeners after preference is applied (header may have been reordered)
+        if (typeof PaginationManager !== 'undefined' && PaginationManager.attachSortListeners) {
+            PaginationManager.attachSortListeners();
+        }
+
         console.log(`Applied preference: "${preference.name}"`);
     },
 
@@ -729,5 +734,18 @@ const GridManager = {
                 toast.remove();
             }, 300);
         }, duration);
-    }
+    },
+
+    applyCurrentPreference() {
+        // Re-apply the currently active preference to the grid layout
+        // This is called after data reloads to preserve column visibility/order
+        if (!this.currentPreferenceKey || !this.savedPreferences[this.currentPreferenceKey]) {
+            console.warn('No active preference to apply');
+            return;
+        }
+        
+        const preference = this.savedPreferences[this.currentPreferenceKey];
+        this.applyPreference(preference);
+        console.log(`Re-applied current preference: "${preference.name}"`);
+    },
 };

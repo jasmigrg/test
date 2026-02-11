@@ -76,6 +76,112 @@
     runStabilized();
   };
 
+  const getByPath = (obj, path) => {
+    if (!obj || !path) return undefined;
+    return path.split(".").reduce((acc, key) => (acc ? acc[key] : undefined), obj);
+  };
+
+  const applyData = (data, prefixes = null) => {
+    if (!data) return;
+    document.querySelectorAll("[data-field]").forEach((el) => {
+      const key = el.getAttribute("data-field");
+      if (!key) return;
+      if (prefixes && !prefixes.some((p) => key.startsWith(p))) return;
+      const val = getByPath(data, key);
+      if (typeof val === "undefined") return;
+      if (el.type === "checkbox") {
+        el.checked = Boolean(val);
+        return;
+      }
+      if (el.type === "radio") {
+        el.checked = String(el.value) === String(val);
+        return;
+      }
+      el.value = val;
+    });
+  };
+
+  const fetchPricingData = async (itemNumber) => {
+    const ctx = window.__ctx || "";
+    const url = `${ctx}/api/pricing-inquiry?itemNumber=${encodeURIComponent(itemNumber || "")}`;
+    const res = await fetch(url, { headers: { Accept: "application/json" } });
+    if (!res.ok) throw new Error("Mock API failed");
+    return res.json();
+  };
+
+  const inputsScope = ["inputs."];
+  let cachedData = null;
+
+  const itemInput = document.querySelector('[data-field="inputs.itemNumber"]');
+  const getPriceBtn = document.querySelector(".inputs-card .primary");
+  const clearBtn = document.querySelector('[data-action="clear"]');
+  const itemError = document.querySelector('[data-role="item-error"]');
+
+  if (itemInput) {
+    const handleItem = async () => {
+      const itemNumber = itemInput.value.trim();
+      if (!itemNumber) {
+        if (itemError) itemError.hidden = true;
+        return;
+      }
+      try {
+        const data = await fetchPricingData(itemNumber);
+        if (data && data.error) {
+          if (itemError) itemError.hidden = false;
+          return;
+        }
+        if (itemError) itemError.hidden = true;
+        cachedData = data;
+        applyData(data, inputsScope);
+      } catch (e) {
+        // ignore for mock failures
+      }
+    };
+    itemInput.addEventListener("change", handleItem);
+    itemInput.addEventListener("blur", handleItem);
+    itemInput.addEventListener("input", () => {
+      if (itemError) itemError.hidden = true;
+    });
+  }
+
+  if (getPriceBtn) {
+    getPriceBtn.addEventListener("click", async () => {
+      const itemNumber = itemInput?.value?.trim() || "";
+      try {
+        const data = cachedData || (await fetchPricingData(itemNumber));
+        if (data && data.error) {
+          if (itemError) itemError.hidden = false;
+          return;
+        }
+        if (itemError) itemError.hidden = true;
+        cachedData = data;
+        applyData(data);
+      } catch (e) {
+        // ignore for mock failures
+      }
+    });
+  }
+
+  if (clearBtn) {
+    clearBtn.addEventListener("click", () => {
+      cachedData = null;
+      if (itemError) itemError.hidden = true;
+      document.querySelectorAll("[data-field]").forEach((el) => {
+        if (el.type === "checkbox" || el.type === "radio") {
+          el.checked = false;
+          return;
+        }
+        el.value = "";
+      });
+      document.querySelectorAll(".input-date").forEach((wrap) => {
+        const display = wrap.querySelector(".date-display");
+        const hidden = wrap.querySelector(".date-hidden");
+        if (display) display.value = "";
+        if (hidden) hidden.value = "";
+      });
+    });
+  }
+
   window.addEventListener("load", init);
   window.addEventListener("resize", () => {
     clearTimeout(window.__piResize);
