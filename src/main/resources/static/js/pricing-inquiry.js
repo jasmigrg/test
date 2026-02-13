@@ -134,29 +134,39 @@
   const clearBtn = document.querySelector('[data-action="clear"]');
   const itemError = document.querySelector('[data-role="item-error"]');
   const priceDateInput = document.querySelector('[data-field="inputs.priceDateIso"]');
+  const makeKey = (item, date) => `${item}|${date || ""}`;
+  let lastKey = "";
+  let inFlightKey = "";
 
   if (itemInput) {
-    let lastItem = "";
     const handleItem = async () => {
       const itemNumber = itemInput.value.trim();
       if (!itemNumber) {
         if (itemError) itemError.hidden = true;
+        cachedData = null;
+        lastKey = "";
         return;
       }
-      if (itemNumber === lastItem) return;
+      const key = makeKey(itemNumber, priceDateInput?.value);
+      if (key === lastKey || key === inFlightKey) return;
+      inFlightKey = key;
       try {
         const data = await fetchPricingData(itemNumber, priceDateInput?.value);
         if (data && data.error) {
           if (itemError) itemError.hidden = false;
-          clearDataFields(["inputs.itemNumber"]);
+          clearDataFields(["inputs.itemNumber", "inputs.priceDate", "inputs.priceDateIso"]);
+          cachedData = null;
+          lastKey = "";
           return;
         }
         if (itemError) itemError.hidden = true;
         cachedData = data;
         applyData(data, inputsScope);
-        lastItem = itemNumber;
+        lastKey = key;
       } catch (e) {
         // ignore for mock failures
+      } finally {
+        inFlightKey = "";
       }
     };
     itemInput.addEventListener("blur", handleItem);
@@ -175,17 +185,26 @@
     priceDateInput.addEventListener("change", async () => {
       const itemNumber = itemInput?.value?.trim() || "";
       if (!itemNumber) return;
+      const key = makeKey(itemNumber, priceDateInput.value);
+      if (key === lastKey || key === inFlightKey) return;
+      inFlightKey = key;
       try {
         const data = await fetchPricingData(itemNumber, priceDateInput.value);
         if (data && data.error) {
           if (itemError) itemError.hidden = false;
+          clearDataFields(["inputs.itemNumber", "inputs.priceDate", "inputs.priceDateIso"]);
+          cachedData = null;
+          lastKey = "";
           return;
         }
         if (itemError) itemError.hidden = true;
         cachedData = data;
         applyData(data);
+        lastKey = key;
       } catch (e) {
         // ignore for mock failures
+      } finally {
+        inFlightKey = "";
       }
     });
   }
@@ -193,16 +212,21 @@
   if (getPriceBtn) {
     getPriceBtn.addEventListener("click", async () => {
       const itemNumber = itemInput?.value?.trim() || "";
+      if (!itemNumber) return;
+      const key = makeKey(itemNumber, priceDateInput?.value);
       try {
-        const data = cachedData || (await fetchPricingData(itemNumber, priceDateInput?.value));
+        const data = cachedData && lastKey === key ? cachedData : await fetchPricingData(itemNumber, priceDateInput?.value);
         if (data && data.error) {
           if (itemError) itemError.hidden = false;
-          clearDataFields(["inputs.itemNumber"]);
+          clearDataFields(["inputs.itemNumber", "inputs.priceDate", "inputs.priceDateIso"]);
+          cachedData = null;
+          lastKey = "";
           return;
         }
         if (itemError) itemError.hidden = true;
         cachedData = data;
         applyData(data);
+        lastKey = key;
       } catch (e) {
         // ignore for mock failures
       }
