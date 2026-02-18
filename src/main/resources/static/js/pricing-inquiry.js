@@ -4,7 +4,10 @@
     const hidden = wrap.querySelector(".date-hidden");
     const btn = wrap.querySelector(".calendar-btn");
     const sync = (val) => {
-      if (!val) return;
+      if (!val) {
+        display.value = "";
+        return;
+      }
       const parts = val.split("-");
       if (parts.length !== 3) return;
       display.value = parts[1] + "/" + parts[2] + "/" + parts[0];
@@ -113,10 +116,12 @@
     });
   };
 
-  const fetchPricingData = async (itemNumber, priceDate) => {
+  const fetchPricingData = async (customer, itemNumber, catNumber, priceDate) => {
     const ctx = window.__ctx || "";
     const params = new URLSearchParams();
+    params.set("customer", customer || "");
     params.set("itemNumber", itemNumber || "");
+    params.set("catNumber", catNumber || "");
     if (priceDate) {
       params.set("priceDate", priceDate);
     }
@@ -126,106 +131,219 @@
     return res.json();
   };
 
-  const inputsScope = ["inputs."];
+  const outputScope = ["customer.", "item.", "priceBreakdown.", "additionalInfo.", "govtLimits."];
   let cachedData = null;
 
+  const VALIDATION_MESSAGES = {
+    customer: "Error Message - Invalid Customer/Ship-To Account",
+    itemNumber: "Error Message - Invalid Item Number",
+    catNumber: "Error Message - Item Master Record Not Found",
+    priceDate: "Error Message - Date Changed is Invalid",
+  };
+  const REQUIRED_MESSAGES = {
+    customer: "Error Message - Customer is required field",
+    itemNumber: "Error Message - Item Number is required field",
+    priceDate: "Error Message - Price Date is required",
+  };
+
   const itemInput = document.querySelector('[data-field="inputs.itemNumber"]');
+  const customerInput = document.querySelector('[data-field="inputs.customer"]');
+  const catInput = document.querySelector('[data-field="inputs.catNumber"]');
+  const priceDateDisplayInput = document.querySelector('[data-field="inputs.priceDate"]');
   const getPriceBtn = document.querySelector(".inputs-card .primary");
   const clearBtn = document.querySelector('[data-action="clear"]');
   const itemError = document.querySelector('[data-role="item-error"]');
   const priceDateInput = document.querySelector('[data-field="inputs.priceDateIso"]');
-  const makeKey = (item, date) => `${item}|${date || ""}`;
+  const inputsCard = document.querySelector(".inputs-card");
+  const defaultErrorText = itemError ? itemError.textContent : "";
+  const makeKey = (item, date, customer, catNumber) =>
+    `${item}|${date || ""}|${customer || ""}|${catNumber || ""}`;
   let lastKey = "";
-  let inFlightKey = "";
 
-  if (itemInput) {
-    const handleItem = async () => {
-      const itemNumber = itemInput.value.trim();
-      if (!itemNumber) {
-        if (itemError) itemError.hidden = true;
-        cachedData = null;
-        lastKey = "";
-        return;
+  const clearFieldErrors = () => {
+    inputsCard?.querySelectorAll(".field-invalid").forEach((el) => el.classList.remove("field-invalid"));
+  };
+
+  const showValidationError = (field, element, message = null) => {
+    clearFieldErrors();
+    if (element) {
+      element.classList.add("field-invalid");
+      element.focus?.();
+    }
+    if (itemError) {
+      itemError.textContent = message || VALIDATION_MESSAGES[field] || defaultErrorText;
+      itemError.hidden = false;
+    }
+  };
+
+  const clearValidationError = () => {
+    clearFieldErrors();
+    if (itemError) {
+      itemError.hidden = true;
+      itemError.textContent = defaultErrorText;
+    }
+  };
+
+  customerInput?.addEventListener("input", () => {
+    clearValidationError();
+    cachedData = null;
+    lastKey = "";
+  });
+  catInput?.addEventListener("input", () => {
+    clearValidationError();
+    cachedData = null;
+    lastKey = "";
+  });
+  priceDateDisplayInput?.addEventListener("input", clearValidationError);
+
+  const parseMmDdYyyyToIso = (value) => {
+    const text = String(value || "").trim();
+    if (!text) return null;
+    const match = text.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (!match) return null;
+    const mm = Number(match[1]);
+    const dd = Number(match[2]);
+    const yyyy = Number(match[3]);
+    if (mm < 1 || mm > 12 || dd < 1 || dd > 31 || yyyy < 1900 || yyyy > 9999) return null;
+    const dt = new Date(yyyy, mm - 1, dd);
+    if (
+      dt.getFullYear() !== yyyy ||
+      dt.getMonth() + 1 !== mm ||
+      dt.getDate() !== dd
+    ) {
+      return null;
+    }
+    return `${String(yyyy).padStart(4, "0")}-${String(mm).padStart(2, "0")}-${String(dd).padStart(2, "0")}`;
+  };
+
+  const normalizeDateInputs = ({ required } = { required: true }) => {
+    const displayVal = priceDateDisplayInput?.value?.trim() || "";
+    const hiddenVal = priceDateInput?.value?.trim() || "";
+    if (!displayVal && !hiddenVal) {
+      if (required) {
+        showValidationError(
+          "priceDate",
+          priceDateDisplayInput,
+          REQUIRED_MESSAGES.priceDate
+        );
       }
-      const key = makeKey(itemNumber, priceDateInput?.value);
-      if (key === lastKey || key === inFlightKey) return;
-      inFlightKey = key;
-      try {
-        const data = await fetchPricingData(itemNumber, priceDateInput?.value);
-        if (data && data.error) {
-          if (itemError) itemError.hidden = false;
-          clearDataFields(["inputs.itemNumber", "inputs.priceDate", "inputs.priceDateIso"]);
-          cachedData = null;
-          lastKey = "";
-          return;
+      return false;
+    }
+    if (displayVal) {
+      const parsedIso = parseMmDdYyyyToIso(displayVal);
+      if (!parsedIso) {
+        if (priceDateInput) {
+          priceDateInput.value = "";
         }
-        if (itemError) itemError.hidden = true;
-        cachedData = data;
-        applyData(data, inputsScope);
-        lastKey = key;
-      } catch (e) {
-        // ignore for mock failures
-      } finally {
-        inFlightKey = "";
+        showValidationError("priceDate", priceDateDisplayInput);
+        return false;
       }
+      if (priceDateInput) {
+        priceDateInput.value = parsedIso;
+      }
+      return true;
+    }
+    if (hiddenVal) {
+      return true;
+    }
+    if (required) {
+      showValidationError(
+        "priceDate",
+        priceDateDisplayInput,
+        REQUIRED_MESSAGES.priceDate
+      );
+    }
+    return false;
+  };
+
+  const validateMandatoryInputs = () => {
+    const customer = customerInput?.value?.trim() || "";
+    const itemNumber = itemInput?.value?.trim() || "";
+    if (!customer) {
+      showValidationError("customer", customerInput, REQUIRED_MESSAGES.customer);
+      return false;
+    }
+    if (!itemNumber) {
+      showValidationError("itemNumber", itemInput, REQUIRED_MESSAGES.itemNumber);
+      return false;
+    }
+    if (!normalizeDateInputs({ required: true })) {
+      return false;
+    }
+    clearValidationError();
+    return true;
+  };
+
+  const resolveApiError = (data, fallbackField = "itemNumber") => {
+    if (!data || !data.error) return null;
+    const field = (data.field && VALIDATION_MESSAGES[data.field]) ? data.field : fallbackField;
+    return {
+      field,
+      message: data.error || VALIDATION_MESSAGES[field] || defaultErrorText,
     };
-    itemInput.addEventListener("blur", handleItem);
-    itemInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") {
-        e.preventDefault();
-        handleItem();
-      }
-    });
-    itemInput.addEventListener("input", () => {
-      if (itemError) itemError.hidden = true;
-    });
-  }
+  };
 
-  if (priceDateInput) {
-    priceDateInput.addEventListener("change", async () => {
-      const itemNumber = itemInput?.value?.trim() || "";
-      if (!itemNumber) return;
-      const key = makeKey(itemNumber, priceDateInput.value);
-      if (key === lastKey || key === inFlightKey) return;
-      inFlightKey = key;
-      try {
-        const data = await fetchPricingData(itemNumber, priceDateInput.value);
-        if (data && data.error) {
-          if (itemError) itemError.hidden = false;
-          clearDataFields(["inputs.itemNumber", "inputs.priceDate", "inputs.priceDateIso"]);
-          cachedData = null;
-          lastKey = "";
-          return;
-        }
-        if (itemError) itemError.hidden = true;
-        cachedData = data;
-        applyData(data);
-        lastKey = key;
-      } catch (e) {
-        // ignore for mock failures
-      } finally {
-        inFlightKey = "";
-      }
-    });
-  }
+  const showApiError = (errorInfo) => {
+    if (!errorInfo) return;
+    const fieldToElement = {
+      customer: customerInput,
+      itemNumber: itemInput,
+      catNumber: catInput,
+      priceDate: priceDateDisplayInput,
+    };
+    clearFieldErrors();
+    const el = fieldToElement[errorInfo.field];
+    if (el) {
+      el.classList.add("field-invalid");
+      el.focus?.();
+    }
+    if (itemError) {
+      itemError.textContent = errorInfo.message;
+      itemError.hidden = false;
+    }
+  };
+
+  itemInput?.addEventListener("input", () => {
+    clearValidationError();
+    cachedData = null;
+    lastKey = "";
+  });
+
+  priceDateInput?.addEventListener("change", () => {
+    clearValidationError();
+    cachedData = null;
+    lastKey = "";
+  });
 
   if (getPriceBtn) {
     getPriceBtn.addEventListener("click", async () => {
+      if (!validateMandatoryInputs()) {
+        return;
+      }
+      const customer = customerInput?.value?.trim() || "";
       const itemNumber = itemInput?.value?.trim() || "";
-      if (!itemNumber) return;
-      const key = makeKey(itemNumber, priceDateInput?.value);
+      const catNumber = catInput?.value?.trim() || "";
+      const key = makeKey(itemNumber, priceDateInput?.value, customer, catNumber);
       try {
-        const data = cachedData && lastKey === key ? cachedData : await fetchPricingData(itemNumber, priceDateInput?.value);
-        if (data && data.error) {
-          if (itemError) itemError.hidden = false;
+        const data = cachedData && lastKey === key
+          ? cachedData
+          : await fetchPricingData(
+              customer,
+              itemNumber,
+              catNumber,
+              priceDateInput?.value
+            );
+        const apiError = resolveApiError(data, "itemNumber");
+        if (apiError) {
+          showApiError(apiError);
           clearDataFields(["inputs.itemNumber", "inputs.priceDate", "inputs.priceDateIso"]);
           cachedData = null;
           lastKey = "";
           return;
         }
-        if (itemError) itemError.hidden = true;
+        clearValidationError();
         cachedData = data;
-        applyData(data);
+        applyData(data, outputScope);
         lastKey = key;
       } catch (e) {
         // ignore for mock failures
@@ -236,7 +354,7 @@
   if (clearBtn) {
     clearBtn.addEventListener("click", () => {
       cachedData = null;
-      if (itemError) itemError.hidden = true;
+      clearValidationError();
       document.querySelectorAll("[data-field]").forEach((el) => {
         if (el.type === "checkbox" || el.type === "radio") {
           el.checked = false;

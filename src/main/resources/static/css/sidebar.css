@@ -9,12 +9,13 @@
     overflow: hidden;
     border-radius: 20px;
     flex-shrink: 0;
-    position: fixed;
-    top: 64px;
-    left: 0;
-    bottom: 0;
-    z-index: 9;
+    position: sticky;
+    top: 0;
+    align-self: start;
+    height: calc(100vh - 64px);
+    z-index: 0;
     padding: 12px 0;
+    transition: width 0.3s ease;
 }
 
 .sidebar::before {
@@ -37,6 +38,7 @@
 
 .sidebar:hover {
     overflow: visible;
+    z-index: 30;
 }
 
 .sidebar:hover .sidebar-menu {
@@ -47,6 +49,11 @@
 /* Expanded state (when hovering) */
 .sidebar.expanded {
     overflow: visible;
+    z-index: 30;
+}
+
+.sidebar.collapsed {
+    z-index: 0;
 }
 
 .sidebar.expanded::before {

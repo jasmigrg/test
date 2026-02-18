@@ -24,6 +24,16 @@
                         <span class="text">Pricing Inquiry</span>
                     </a>
                 </li>
+                <li class="submenu-item">
+                    <a href="/margin-funding-maintenance" class="submenu-link">
+                        <span class="text">Margin Funding Item Maintenance</span>
+                    </a>
+                </li>
+                <li class="submenu-item">
+                    <a href="/cams-eligibility" class="submenu-link">
+                        <span class="text">CAMS Eligibility</span>
+                    </a>
+                </li>
             </ul>
         </li>
     </ul>

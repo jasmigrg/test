@@ -1,0 +1,222 @@
+.mfi-grid-controls {
+  padding: 8px 0;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  min-width: 0;
+  overflow: visible;
+  position: relative;
+  z-index: 20;
+}
+
+.mfi-action-toolbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 10px;
+  min-width: 480px;
+  flex: 1 1 480px;
+  overflow: visible;
+  white-space: nowrap;
+  padding-bottom: 0;
+}
+
+.mfi-action-btn {
+  border: none;
+  background: transparent;
+  color: #333;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.15s ease, transform 0.15s ease;
+  flex: 0 0 auto;
+}
+
+.mfi-action-btn span {
+  font-size: 13px;
+  line-height: 1;
+}
+
+.mfi-action-btn svg {
+  width: 18px;
+  height: 18px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+.mfi-action-btn.icon-only {
+  width: 24px;
+  height: 24px;
+  justify-content: center;
+}
+
+.mfi-action-btn.is-add {
+  color: #2f9e44;
+}
+
+.mfi-action-btn:hover {
+  color: #007c91;
+  transform: translateY(-1px);
+}
+
+.mfi-action-btn.is-add:hover {
+  color: #258338;
+}
+
+.mfi-grid-controls .grid-manager-section {
+  padding: 0;
+  flex: 0 1 auto;
+  margin-left: 0;
+}
+
+.mfi-grid-manager-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  flex: 0 1 620px;
+  min-width: 620px;
+  justify-content: flex-end;
+  position: relative;
+  z-index: 21;
+}
+
+.mfi-view-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 0 0 140px;
+  min-width: 124px;
+  justify-content: flex-end;
+}
+
+.mfi-view-btn {
+  border: none;
+  background: transparent;
+  color: #6e757a;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
+
+.mfi-view-btn svg {
+  width: 22px;
+  height: 22px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.mfi-view-btn:hover {
+  color: #007c91;
+  background-color: rgba(0, 124, 145, 0.08);
+}
+
+.mfi-view-btn.is-active {
+  color: #28a6b7;
+}
+
+.mfi-view-divider {
+  width: 1px;
+  height: 28px;
+  background: #d7dadc;
+  margin: 0 2px;
+}
+
+.mfi-grid-controls .grid-manager-row,
+.mfi-grid-controls .grid-manager-title,
+.mfi-grid-controls .grid-manager-label,
+.mfi-grid-controls .gm-toggle {
+  white-space: nowrap;
+}
+
+.mfi-grid-controls .grid-manager-row {
+  gap: 10px;
+  padding: 6px 12px;
+}
+
+.mfi-grid-controls .gm-menu {
+  z-index: 3000;
+}
+
+.mfi-grid-controls .gm-toggle {
+  font-size: 12px;
+  padding: 6px 24px 6px 12px;
+}
+
+.mfi-grid-controls .grid-manager-title,
+.mfi-grid-controls .grid-manager-label {
+  font-size: 12px;
+}
+
+#mfiGrid .ag-header-cell {
+  padding: 8px 10px !important;
+}
+
+#mfiGrid .ag-header-cell-label {
+  white-space: normal !important;
+  line-height: 1.2 !important;
+  align-items: center !important;
+}
+
+#mfiGrid .ag-header-cell-text {
+  white-space: normal !important;
+  overflow-wrap: break-word;
+}
+
+#mfiGrid .ag-floating-filter,
+#mfiGrid .ag-floating-filter-body,
+#mfiGrid .ag-floating-filter-full-body {
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 0 8px !important;
+}
+
+#mfiGrid .ag-floating-filter .ag-input-wrapper,
+#mfiGrid .ag-floating-filter-body .ag-input-wrapper,
+#mfiGrid .ag-floating-filter .ag-wrapper,
+#mfiGrid .ag-floating-filter-body .ag-wrapper {
+  display: flex !important;
+  align-items: center !important;
+}
+
+#mfiGrid .ag-floating-filter-input,
+#mfiGrid .ag-input-field-input:not(.ag-checkbox-input),
+#mfiGrid .ag-text-field-input {
+  height: 30px !important;
+  min-height: 30px !important;
+  margin: 0 !important;
+}
+
+#mfiGrid.mfi-density-comfortable {
+  --mfi-cell-font-size: 14px;
+}
+
+#mfiGrid.mfi-density-compact {
+  --mfi-cell-font-size: 13px;
+}
+
+#mfiGrid.mfi-density-spacious {
+  --mfi-cell-font-size: 15px;
+}
+
+#mfiGrid .ag-cell {
+  font-size: var(--mfi-cell-font-size, 13px);
+}

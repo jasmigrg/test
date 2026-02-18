@@ -39,170 +39,6 @@ textarea {
   line-height: 1.2;
 }
 
-.app-shell {
-  display: grid;
-  grid-template-columns: 70px 1fr;
-  grid-template-rows: 64px 1fr;
-  min-height: 100vh;
-  width: 100%;
-}
-
-.app-header {
-  grid-column: 1 / -1;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 24px;
-  background: #eceff0;
-  border-bottom: 1px solid var(--line);
-}
-
-.header-left {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.logo {
-  font-weight: 600;
-  padding: 6px 10px;
-  background: #e0e5e7;
-  border-radius: 6px;
-}
-
-.header-nav {
-  display: flex;
-  gap: 10px;
-}
-
-.icon-btn {
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: 8px;
-  background: #e8ebed;
-  display: grid;
-  place-items: center;
-  cursor: pointer;
-}
-
-.icon-btn svg {
-  width: 18px;
-  height: 18px;
-  fill: #5c646a;
-}
-
-.header-center {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-}
-
-.search {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #edf0f1;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  padding: 6px 12px;
-  width: 260px;
-}
-
-.search svg {
-  width: 16px;
-  height: 16px;
-  fill: #7a8288;
-}
-
-.search input {
-  border: none;
-  outline: none;
-  background: transparent;
-  width: 100%;
-  font-size: 13px;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.user-meta {
-  text-align: right;
-}
-
-.user-name {
-  font-weight: 600;
-}
-
-.user-role {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.user-avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  background: #d2d8db;
-  display: grid;
-  place-items: center;
-  font-weight: 600;
-}
-
-
-.content {
-  grid-column: 2 / -1;
-  padding: 24px 30px 40px;
-  overflow-x: hidden;
-  background: #ffffff;
-  width: 100%;
-  max-width: none;
-  justify-self: stretch;
-}
-
-.breadcrumb {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.crumb-link {
-  color: var(--muted);
-  text-decoration: none;
-}
-
-.crumb-link:hover {
-  color: var(--teal);
-  text-decoration: underline;
-}
-
-.page-title {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-top: 6px;
-}
-
-.title-icon {
-  width: 26px;
-  height: 26px;
-  border-radius: 6px;
-  background: #dbe2e5;
-}
-
-h1 {
-  margin: 0;
-  font-size: 22px;
-}
-
 .toolbar {
   display: flex;
   gap: 14px;
@@ -848,6 +684,11 @@ h1 {
   margin: -4px 0 4px;
 }
 
+.inputs-card .field-invalid {
+  border-color: #b3261e !important;
+  box-shadow: 0 0 0 1px rgba(179, 38, 30, 0.22);
+}
+
 .inputs-card input[type="text"] {
   background: #ffffff;
 }
@@ -1137,17 +978,6 @@ h1 {
     padding: 20px 20px 32px;
   }
 
-  .sidebar {
-    display: none;
-  }
-
-  .app-shell {
-    grid-template-columns: 1fr;
-  }
-
-  .content {
-    grid-column: 1 / -1;
-  }
 }
 
 /* Pricing + Rebate cost cards (stable shrink-safe grid) */

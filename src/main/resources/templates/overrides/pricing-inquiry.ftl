@@ -5,23 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Pricing Inquiry</title>
   <#assign ctx = (request.contextPath)!"" />
+  <link rel="stylesheet" href="${ctx}/css/app.css?v=7" />
   <link rel="stylesheet" href="${ctx}/css/pricing-inquiry.css?v=2" />
-  <link rel="stylesheet" href="${ctx}/css/header.css?v=1" />
-  <link rel="stylesheet" href="${ctx}/css/sidebar.css?v=1" />
 </head>
 <body>
   <div class="app-shell">
     <#include "/components/header.ftl">
+    <#import "/components/page-header.ftl" as pageHeader>
 
     <#include "/components/sidebar.ftl">
     <@navigation currentPath="/pricing-inquiry" />
 
     <main class="content">
-      <div class="breadcrumb"><a class="crumb-link" href="${ctx}/">Home</a> / Pricing Inquiry</div>
-      <div class="page-title">
-        <div class="title-icon"></div>
-        <h1>Pricing Inquiry</h1>
-      </div>
+      <@pageHeader.render
+        title="Pricing Inquiry"
+        crumbs=[{"label":"Home","href":"${ctx}/"},{"label":"Pricing Inquiry"}]
+      />
 
       <div class="toolbar">
         <a class="tool-btn danger back-home" href="${ctx}/" aria-label="Back to Home">
@@ -616,7 +615,7 @@
   <script>
     window.__ctx = "${ctx}";
   </script>
-  <script src="${ctx}/js/sidebar.js?v=1"></script>
+  <script src="${ctx}/js/sidebar.js?v=2"></script>
   <script src="${ctx}/js/pricing-inquiry.js?v=1"></script>
 </body>
 </html>

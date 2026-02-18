@@ -12,27 +12,66 @@ import org.springframework.web.bind.annotation.RestController;
 public class MockPricingApiController {
   private static final DateTimeFormatter DISPLAY_DATE = DateTimeFormatter.ofPattern("MM/dd/yyyy");
   private static final DateTimeFormatter ISO_DATE = DateTimeFormatter.ISO_LOCAL_DATE;
+  private static final String ERR_INVALID_CUSTOMER = "Error Message - Invalid Customer/Ship-To Account";
+  private static final String ERR_INVALID_ITEM = "Error Message - Invalid Item Number";
+  private static final String ERR_ITEM_MASTER_NOT_FOUND = "Error Message - Item Master Record Not Found";
+  private static final String ERR_INVALID_DATE = "Error Message - Date Changed is Invalid";
+  private static final Map<String, String> ITEM_CUSTOMER = Map.of(
+          "10001", "CUST-4392",
+          "10002", "CUST-5577",
+          "10003", "CUST-7721");
+  private static final Map<String, String> ITEM_CAT = Map.of(
+          "10001", "CAT-8821",
+          "10002", "CAT-6630",
+          "10003", "CAT-7710");
 
   @GetMapping("/api/pricing-inquiry")
   public Map<String, Object> pricingInquiry(
+          @RequestParam(required = false) String customer,
           @RequestParam(required = false) String itemNumber,
+          @RequestParam(required = false) String catNumber,
           @RequestParam(required = false) String priceDate) {
-    String item = (itemNumber == null || itemNumber.isBlank()) ? "10001" : itemNumber.trim();
-    return buildMock(item, priceDate);
+    String normalizedCustomer = trimToEmpty(customer);
+    String normalizedItem = trimToEmpty(itemNumber);
+    String normalizedCat = trimToEmpty(catNumber);
+    String normalizedDate = trimToEmpty(priceDate);
+
+    if (normalizedCustomer.isEmpty()) {
+      return error("customer", ERR_INVALID_CUSTOMER);
+    }
+    if (normalizedItem.isEmpty()) {
+      return error("itemNumber", ERR_INVALID_ITEM);
+    }
+    if (normalizedDate.isEmpty()) {
+      return error("priceDate", ERR_INVALID_DATE);
+    }
+    if (!ITEM_CUSTOMER.containsKey(normalizedItem)) {
+      return error("itemNumber", ERR_INVALID_ITEM);
+    }
+    String expectedCustomer = ITEM_CUSTOMER.get(normalizedItem);
+    if (!expectedCustomer.equalsIgnoreCase(normalizedCustomer)) {
+      return error("customer", ERR_INVALID_CUSTOMER);
+    }
+    String expectedCat = ITEM_CAT.get(normalizedItem);
+    if (!normalizedCat.isEmpty() && !expectedCat.equalsIgnoreCase(normalizedCat)) {
+      return error("catNumber", ERR_ITEM_MASTER_NOT_FOUND);
+    }
+
+    LocalDate parsedDate = parseDateStrict(normalizedDate);
+    if (parsedDate == null) {
+      return error("priceDate", ERR_INVALID_DATE);
+    }
+    return buildMock(normalizedItem, parsedDate);
   }
 
-  private Map<String, Object> buildMock(String itemNumber, String priceDate) {
-    if (!itemNumber.equals("10001") && !itemNumber.equals("10002") && !itemNumber.equals("10003")) {
-      return Map.of("error", "Item not found");
-    }
+  private Map<String, Object> buildMock(String itemNumber, LocalDate date) {
     Map<String, Object> root = new LinkedHashMap<>();
-    LocalDate date = parseDate(priceDate);
     int itemIdx = itemNumber.equals("10002") ? 2 : itemNumber.equals("10003") ? 3 : 1;
 
     // Inputs
-    put(root, "inputs.customer", itemIdx == 1 ? "CUST-4392" : itemIdx == 2 ? "CUST-5577" : "CUST-7721");
+    put(root, "inputs.customer", ITEM_CUSTOMER.get(itemNumber));
     put(root, "inputs.itemNumber", itemNumber);
-    put(root, "inputs.catNumber", itemIdx == 2 ? "CAT-6630" : itemIdx == 3 ? "CAT-7710" : "CAT-8821");
+    put(root, "inputs.catNumber", ITEM_CAT.get(itemNumber));
     put(root, "inputs.orderQty", itemIdx == 3 ? "2" : "1");
     put(root, "inputs.uom", itemIdx == 2 ? "BX" : "EA");
     put(root, "inputs.priceDate", date.format(DISPLAY_DATE));
@@ -302,15 +341,23 @@ public class MockPricingApiController {
     return root;
   }
 
-  private LocalDate parseDate(String priceDate) {
-    if (priceDate == null || priceDate.isBlank()) {
-      return LocalDate.now();
-    }
+  private LocalDate parseDateStrict(String priceDate) {
     try {
       return LocalDate.parse(priceDate, ISO_DATE);
     } catch (Exception ignored) {
-      return LocalDate.now();
+      return null;
     }
+  }
+
+  private Map<String, Object> error(String field, String message) {
+    Map<String, Object> result = new LinkedHashMap<>();
+    result.put("error", message);
+    result.put("field", field);
+    return result;
+  }
+
+  private String trimToEmpty(String value) {
+    return value == null ? "" : value.trim();
   }
 
   private String adjustByDate(double base, LocalDate date) {

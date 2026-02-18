@@ -153,8 +153,8 @@
     function init() {
         if (sidebar) {
             sidebar.classList.add('collapsed');
+            sidebar.classList.remove('expanded');
         }
-
         initializeHoverBehavior();
         initializeSubmenuBehavior();
         setActiveMenuItem();
