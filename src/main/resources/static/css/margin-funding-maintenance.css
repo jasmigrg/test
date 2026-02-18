@@ -16,11 +16,13 @@
   align-items: center;
   flex-wrap: nowrap;
   gap: 10px;
-  min-width: 480px;
-  flex: 1 1 480px;
-  overflow: visible;
+  min-width: 0;
+  flex: 1 1 auto;
+  overflow-x: auto;
+  overflow-y: hidden;
   white-space: nowrap;
   padding-bottom: 0;
+  scrollbar-width: thin;
 }
 
 .mfi-action-btn {
@@ -84,8 +86,8 @@
   align-items: center;
   gap: 8px;
   margin-left: auto;
-  flex: 0 1 620px;
-  min-width: 620px;
+  flex: 1 1 auto;
+  min-width: 0;
   justify-content: flex-end;
   position: relative;
   z-index: 21;
@@ -95,8 +97,8 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  flex: 0 0 140px;
-  min-width: 124px;
+  flex: 0 0 auto;
+  min-width: 0;
   justify-content: flex-end;
 }
 
@@ -219,4 +221,65 @@
 
 #mfiGrid .ag-cell {
   font-size: var(--mfi-cell-font-size, 13px);
+}
+
+@media (max-width: 1366px) {
+  .mfi-grid-controls {
+    flex-wrap: nowrap;
+    gap: 8px;
+  }
+
+  .mfi-action-toolbar {
+    gap: 8px;
+  }
+
+  .mfi-action-btn {
+    gap: 6px;
+    font-size: 12px;
+  }
+
+  .mfi-action-btn span {
+    font-size: 12px;
+  }
+
+  .mfi-action-btn svg {
+    width: 16px;
+    height: 16px;
+  }
+
+  .mfi-grid-manager-tools {
+    gap: 6px;
+  }
+
+  .mfi-grid-controls .grid-manager-row {
+    gap: 8px;
+    padding: 4px 8px;
+  }
+
+  .mfi-grid-controls .gm-toggle {
+    font-size: 11px;
+    padding: 5px 22px 5px 10px;
+  }
+
+  .mfi-grid-controls .grid-manager-title,
+  .mfi-grid-controls .grid-manager-label {
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 1180px) {
+  .mfi-grid-controls {
+    flex-wrap: wrap;
+  }
+
+  .mfi-action-toolbar,
+  .mfi-grid-manager-tools {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .mfi-grid-manager-tools {
+    margin-left: 0;
+    justify-content: flex-start;
+  }
 }
