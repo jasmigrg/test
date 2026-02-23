@@ -15,6 +15,11 @@ public class PricingInquiryController {
     return "pricing/margin-funding-maintenance";
   }
 
+  @GetMapping("/margin-funding-customer-maintenance")
+  public String marginFundingCustomerMaintenance() {
+    return "pricing/margin-funding-customer-maintenance";
+  }
+
   @GetMapping("/")
   public String home() {
     return "home";

@@ -26,6 +26,7 @@
         <p style="margin: 10px 0 16px;">Use the links below to open the demo screens.</p>
         <a class="primary" href="${ctx}/pricing-inquiry" style="display: inline-block; text-decoration: none; text-align: center;">Go to Pricing Inquiry</a>
         <a class="primary" href="${ctx}/margin-funding-maintenance" style="display: inline-block; text-decoration: none; text-align: center; margin-top: 10px;">Go to Margin Funding Item Maintenance</a>
+        <a class="primary" href="${ctx}/margin-funding-customer-maintenance" style="display: inline-block; text-decoration: none; text-align: center; margin-top: 10px;">Go to Margin Funding Customer Maintenance</a>
         <a class="primary" href="${ctx}/cams-eligibility" style="display: inline-block; text-decoration: none; text-align: center; margin-top: 10px;">Go to CAMS Eligibility</a>
       </div>
     </main>

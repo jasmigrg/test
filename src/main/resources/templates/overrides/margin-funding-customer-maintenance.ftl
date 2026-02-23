@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Margin Funding Item Maintenance</title>
+  <title>Margin Funding Customer Maintenance</title>
   <#assign ctx = (request.contextPath)!"" />
   <link rel="stylesheet" href="${ctx}/css/app.css">
   <link rel="stylesheet" href="${ctx}/css/grid.css">
   <link rel="stylesheet" href="${ctx}/css/grid-manager.css">
   <link rel="stylesheet" href="${ctx}/css/grid-page.css">
   <link rel="stylesheet" href="${ctx}/css/action-toolbar.css">
-  <link rel="stylesheet" href="${ctx}/css/margin-funding-maintenance.css">
+  <link rel="stylesheet" href="${ctx}/css/margin-funding-customer-maintenance.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <!-- AG-Grid CSS -->
@@ -21,7 +21,7 @@
   <script src="${ctx}/js/dynamic-grid.js" defer></script>
   <script src="${ctx}/js/grid-manager.js" defer></script>
   <script src="${ctx}/js/grid-toolbar.js" defer></script>
-  <script src="${ctx}/js/margin-funding-maintenance.js" defer></script>
+  <script src="${ctx}/js/margin-funding-customer-maintenance.js" defer></script>
 
   <!-- AG-Grid JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/dist/ag-grid-community.min.js"></script>
@@ -38,13 +38,13 @@
   <input type="hidden" id="currentUserId" value="${userId!'defaultUser'}" />
 
   <div class="app-shell">
-    <@sidebar.navigation currentPath="/margin-funding-maintenance" />
+    <@sidebar.navigation currentPath="/margin-funding-customer-maintenance" />
 
     <main class="content">
       <div class="content-card">
         <@pageHeader.render
-          title="Margin Funding Item Maintenance"
-          crumbs=[{"label":"Home","href":"${ctx}/"},{"label":"Margin Funding Item Maintenance"}]
+          title="Margin Funding Customer Maintenance"
+          crumbs=[{"label":"Home","href":"${ctx}/"},{"label":"Margin Funding Customer Maintenance"}]
         />
 
         <#assign iconBack><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6L9 12L15 18" /></svg></#assign>
@@ -64,13 +64,13 @@
           {"id":"execute","label":"Execute","iconHtml":iconExecute}
         ] />
 
-        <@actionToolbar.render actions=actionItems toolbarLabel="Margin funding actions" rightSectionLabel="Grid manager view actions">
+        <@actionToolbar.render actions=actionItems toolbarLabel="Margin funding customer actions" rightSectionLabel="Grid manager view actions">
             <@gridManager.gridManager />
             <@gridViewActions.render defaultDensity="compact" />
         </@actionToolbar.render>
 
         <section class="grid-wrapper">
-          <div id="mfiGrid" class="ag-theme-alpine app-grid"></div>
+          <div id="mfcGrid" class="ag-theme-alpine app-grid"></div>
         </section>
       </div>
     </main>

@@ -1,6 +1,6 @@
 # UI Contract For Pricing Screens
 
-This project uses a shared CSS contract so CAMS, Margin Funding, and future screens match consistently.
+This project uses a shared UI/CSS contract so pricing grid screens (Margin Funding and future screens) match consistently.
 
 ## 1) CSS Layering (mandatory)
 
@@ -19,7 +19,7 @@ This project uses a shared CSS contract so CAMS, Margin Funding, and future scre
 - `src/main/resources/static/css/grid-manager.css`
   - Shared Grid Manager bar/dropdowns/modal/toast styles.
 - `src/main/resources/static/css/grid-page.css`
-  - Shared page-level grid layout rules used by both CAMS and Margin Funding.
+  - Shared page-level grid layout rules for grid-based pricing screens.
 - Screen CSS files (example: `pricing-inquiry.css`)
   - Screen-specific UI only. Do not redefine shared shell/header/sidebar/grid-manager behavior here.
 
@@ -36,11 +36,13 @@ Do not include `header.css`, `layout.css`, `sidebar.css`, `page-header.css` dire
 
 ## 3) Markup contract for AG Grid screens
 
-- `<body class="cams-page">` or `<body class="mfi-page">` (screen scope class required).
+- Use a screen scope body class (example: `<body class="mfi-page">`).
 - Grid container must use:
   - `class="ag-theme-alpine app-grid"`
 - Grid Manager should come from:
   - `src/main/resources/templates/components/grid-manager-macro.ftl`
+- Shared density/download controls should come from:
+  - `src/main/resources/templates/components/grid-view-actions.ftl`
 
 ## 4) JS contract
 
@@ -53,9 +55,7 @@ Do not include `header.css`, `layout.css`, `sidebar.css`, `page-header.css` dire
 
 - No duplicate style definitions for `.app-shell`, `.content`, `.sidebar`, `.gm-*`, `.ag-theme-alpine`.
 - No inline size styles for grid containers (use `.app-grid`).
-- 100% zoom screenshot proof for:
-  - CAMS Eligibility
-  - Margin Funding Item Maintenance
+- 100% zoom screenshot proof for the screen(s) changed in the PR (for example Margin Funding screens)
 - Validate:
   - Header fixed and aligned
   - Sidebar not overlapping content unexpectedly
@@ -88,6 +88,8 @@ When building a new grid-based pricing screen, use this pattern.
   - `src/main/resources/templates/components/action-toolbar.ftl`
 - Grid Manager macro:
   - `src/main/resources/templates/components/grid-manager-macro.ftl`
+- Grid view actions macro (density + download):
+  - `src/main/resources/templates/components/grid-view-actions.ftl`
 - Shared grid engine:
   - `src/main/resources/static/js/dynamic-grid.js`
 - Shared Grid Manager behavior:
@@ -134,7 +136,7 @@ Use this to explain the architecture quickly to other devs.
 
 2. Shared toolbar renders UI
 - `components/action-toolbar.ftl` renders the toolbar from `actionItems`.
-- Right section hosts shared grid manager + view controls (density/download).
+- Right section hosts shared grid manager + shared view controls macro (`grid-view-actions.ftl`).
 
 3. Screen JS creates the grid
 - Screen JS calls `DynamicGrid.createGrid(config)`.

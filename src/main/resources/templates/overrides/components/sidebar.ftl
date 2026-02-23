@@ -20,17 +20,22 @@
             </a>
             <ul class="submenu">
                 <li class="submenu-item">
-                    <a href="/pricing-inquiry" class="submenu-link">
+                    <a href="/pricing-inquiry" class="submenu-link" title="Pricing Inquiry">
                         <span class="text">Pricing Inquiry</span>
                     </a>
                 </li>
                 <li class="submenu-item">
-                    <a href="/margin-funding-maintenance" class="submenu-link">
+                    <a href="/margin-funding-maintenance" class="submenu-link" title="Margin Funding Item Maintenance">
                         <span class="text">Margin Funding Item Maintenance</span>
                     </a>
                 </li>
                 <li class="submenu-item">
-                    <a href="/cams-eligibility" class="submenu-link">
+                    <a href="/margin-funding-customer-maintenance" class="submenu-link" title="Margin Funding Customer Maintenance">
+                        <span class="text">Margin Funding Customer Maintenance</span>
+                    </a>
+                </li>
+                <li class="submenu-item">
+                    <a href="/cams-eligibility" class="submenu-link" title="CAMS Eligibility">
                         <span class="text">CAMS Eligibility</span>
                     </a>
                 </li>

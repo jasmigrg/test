@@ -212,17 +212,18 @@
 
 .submenu-link {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     padding: 8px 12px 8px 48px;
     color: rgba(255, 255, 255, 0.6);
     text-decoration: none;
     transition: background-color 0.2s ease, color 0.2s ease;
-    white-space: nowrap;
+    white-space: normal;
     border-radius: 0;
     font-size: 13px;
     width: 100%;
     margin: 0;
     box-sizing: border-box;
+    min-height: 34px;
 }
 
 .submenu-link:hover {
@@ -240,12 +241,21 @@
     transition: opacity 0.3s ease;
     font-size: 13px;
     visibility: hidden;
+    line-height: 1.2;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .sidebar:hover .submenu-link .text,
 .sidebar.expanded .submenu-link .text {
     opacity: 1;
     visibility: visible;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    white-space: normal;
+    text-overflow: ellipsis;
 }
 
 /* Keep submenu text hidden when collapsed */

@@ -22,8 +22,40 @@ public class MarginFundingBffService {
     private final List<Map<String, Object>> stubRows = IntStream.rangeClosed(1, 250)
             .mapToObj(this::buildRow)
             .collect(Collectors.toList());
+    private final List<Map<String, Object>> customerMaintenanceStubRows = IntStream.rangeClosed(1, 250)
+            .mapToObj(this::buildCustomerMaintenanceRow)
+            .collect(Collectors.toList());
 
     public Map<String, Object> search(
+            Integer page,
+            Integer size,
+            Integer pageNum,
+            Integer pageLimit,
+            String sortBy,
+            String sortDirection,
+            String sort,
+            String direction,
+            Map<String, String> params) {
+        return searchDataset(
+                stubRows, page, size, pageNum, pageLimit, sortBy, sortDirection, sort, direction, params);
+    }
+
+    public Map<String, Object> searchCustomerMaintenance(
+            Integer page,
+            Integer size,
+            Integer pageNum,
+            Integer pageLimit,
+            String sortBy,
+            String sortDirection,
+            String sort,
+            String direction,
+            Map<String, String> params) {
+        return searchDataset(
+                customerMaintenanceStubRows, page, size, pageNum, pageLimit, sortBy, sortDirection, sort, direction, params);
+    }
+
+    private Map<String, Object> searchDataset(
+            List<Map<String, Object>> dataset,
             Integer page,
             Integer size,
             Integer pageNum,
@@ -48,7 +80,7 @@ public class MarginFundingBffService {
         String resolvedSortBy = (sortBy == null || sortBy.isBlank()) ? sort : sortBy;
         String resolvedDirection = (sortDirection == null || sortDirection.isBlank()) ? direction : sortDirection;
 
-        List<Map<String, Object>> filtered = new ArrayList<>(stubRows);
+        List<Map<String, Object>> filtered = new ArrayList<>(dataset);
         applyFilters(filtered, params);
         applySort(filtered, resolvedSortBy, resolvedDirection);
 
@@ -192,6 +224,24 @@ public class MarginFundingBffService {
         row.put("timeUpdated", String.format("%02d:30:00", 9 + (i % 8)));
         row.put("workStnId", "WS" + (200 + (i % 6)));
         row.put("programId", "PGM-" + (3000 + (i % 12)));
+        return row;
+    }
+
+    private Map<String, Object> buildCustomerMaintenanceRow(int i) {
+        Map<String, Object> row = new LinkedHashMap<>();
+        row.put("uniqueKey", "UK-" + (5000 + i));
+        row.put("vendorProgram", "Program " + (1 + (i % 4)));
+        row.put("vendorFamilyNumber", "VF-" + (200 + (i % 6)));
+        row.put("vendorFamilyName", "Vendor Family " + String.valueOf((char) ('A' + (i % 6))));
+        row.put("accountType", i % 2 == 0 ? "Ship-To" : "Bill-To");
+        row.put("customerNumber", String.valueOf(700000 + i));
+        row.put("customerName", "Customer " + i);
+        row.put("ieFlag", i % 3 == 0 ? "E" : "I");
+        row.put("effectiveFrom", "01/01/2026");
+        row.put("effectiveThru", "12/31/2026");
+        row.put("programId", "PGM-" + (3000 + (i % 12)));
+        row.put("workStnId", "WS" + (200 + (i % 6)));
+        row.put("userId", "USER" + (100 + (i % 8)));
         return row;
     }
 }
