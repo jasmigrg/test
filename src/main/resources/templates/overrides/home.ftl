@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Home</title>
   <#assign ctx = (request.contextPath)!"" />
-  <link rel="stylesheet" href="${ctx}/css/app.css?v=7" />
-  <link rel="stylesheet" href="${ctx}/css/pricing-inquiry.css?v=2" />
+  <link rel="stylesheet" href="${ctx}/css/app.css" />
+  <link rel="stylesheet" href="${ctx}/css/pricing-inquiry.css" />
 </head>
 <body>
   <div class="app-shell">
@@ -30,6 +30,6 @@
       </div>
     </main>
   </div>
-  <script src="${ctx}/js/sidebar.js?v=2"></script>
+  <script src="${ctx}/js/sidebar.js"></script>
 </body>
 </html>

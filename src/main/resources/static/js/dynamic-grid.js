@@ -1,3 +1,70 @@
+class ManualApplyFloatingFilter {
+  init(params) {
+    this.params = params;
+    this.currentValue = '';
+    this.gui = document.createElement('div');
+    this.gui.className = 'mfi-manual-floating-filter';
+
+    this.input = document.createElement('input');
+    this.input.type = 'text';
+    this.input.className = 'mfi-floating-filter-input';
+    this.input.setAttribute('aria-label', `${params.column.getColDef().headerName || params.column.getColId()} filter`);
+    this.input.dataset.colId = params.column.getColId();
+
+    this.onKeyDown = (event) => {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        if (this.params?.api && typeof this.params.api.applyPendingFloatingFilters === 'function') {
+          this.params.api.applyPendingFloatingFilters();
+        } else {
+          this.apply();
+        }
+      }
+    };
+
+    this.input.addEventListener('keydown', this.onKeyDown);
+    this.gui.appendChild(this.input);
+
+    if (!params.api.__manualFloatingFilters) {
+      params.api.__manualFloatingFilters = [];
+    }
+    params.api.__manualFloatingFilters.push(this);
+  }
+
+  getGui() {
+    return this.gui;
+  }
+
+  onParentModelChanged(parentModel) {
+    const next = parentModel && parentModel.filter != null ? String(parentModel.filter) : '';
+    this.currentValue = next;
+    if (this.input && this.input.value !== next) {
+      this.input.value = next;
+    }
+  }
+
+  apply() {
+    if (!this.input) return;
+    const value = this.input.value.trim();
+    this.currentValue = value;
+    this.params.parentFilterInstance((instance) => {
+      if (!instance) return;
+      instance.onFloatingFilterChanged('contains', value || null);
+    });
+  }
+
+  destroy() {
+    if (this.input && this.onKeyDown) {
+      this.input.removeEventListener('keydown', this.onKeyDown);
+    }
+    const list = this.params?.api?.__manualFloatingFilters;
+    if (Array.isArray(list)) {
+      const idx = list.indexOf(this);
+      if (idx >= 0) list.splice(idx, 1);
+    }
+  }
+}
+
 const DynamicGrid = {
   autoFitBindings: new WeakMap(),
 
@@ -108,11 +175,21 @@ const DynamicGrid = {
       paginationPageSizeSelector: config.pageSizeSelector || [10, 20, 50, 100],
       enableCellTextSelection: true,
       ensureDomOrder: true,
+      components: config.manualFilterApply
+        ? { manualApplyFloatingFilter: ManualApplyFloatingFilter }
+        : {},
       defaultColDef: {
         sortable: true,
         filter: true,
         resizable: true,
         floatingFilter: config.floatingFilter !== undefined ? config.floatingFilter : true,
+        ...(config.manualFilterApply
+          ? {
+              suppressFloatingFilterButton: true,
+              floatingFilterComponent: 'manualApplyFloatingFilter',
+              floatingFilterComponentParams: { suppressFilterButton: true }
+            }
+          : {}),
         filterParams: {
           suppressAndOrCondition: true,
           buttons: ['apply', 'reset'],
@@ -207,6 +284,10 @@ const DynamicGrid = {
       ...defaultGridOptions,
       ...config.gridOptions,
       enableFilterHandlers: true,
+      components: {
+        ...(defaultGridOptions.components || {}),
+        ...(config.gridOptions?.components || {})
+      },
       defaultColDef: {
         ...defaultGridOptions.defaultColDef,
         ...(config.gridOptions?.defaultColDef || {})
@@ -214,6 +295,16 @@ const DynamicGrid = {
     };
 
     const grid = agGrid.createGrid(gridElement, gridOptions);
+    if (config.manualFilterApply) {
+      grid.applyPendingFloatingFilters = () => {
+        if (!Array.isArray(grid.__manualFloatingFilters)) return;
+        grid.__manualFloatingFilters.forEach((f) => {
+          if (f && typeof f.apply === 'function') {
+            f.apply();
+          }
+        });
+      };
+    }
     this.bindAutoFit(grid, gridElement, config);
     return grid;
   },

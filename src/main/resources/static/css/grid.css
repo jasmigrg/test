@@ -53,6 +53,77 @@
   color: #ffffff !important;
 }
 
+/* Shared sort indicator behavior and icon color for all app grids */
+.ag-theme-alpine.app-grid .ag-header-cell .ag-sort-indicator-container {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.ag-theme-alpine.app-grid .ag-header-cell .ag-sort-indicator-container .ag-icon,
+.ag-theme-alpine.app-grid .ag-header-cell .ag-sort-indicator-container .ag-icon::before,
+.ag-theme-alpine.app-grid .ag-header-cell .ag-sort-none-icon,
+.ag-theme-alpine.app-grid .ag-header-cell .ag-sort-none-icon::before,
+.ag-theme-alpine.app-grid .ag-header-cell .ag-sort-ascending-icon,
+.ag-theme-alpine.app-grid .ag-header-cell .ag-sort-ascending-icon::before,
+.ag-theme-alpine.app-grid .ag-header-cell .ag-sort-descending-icon,
+.ag-theme-alpine.app-grid .ag-header-cell .ag-sort-descending-icon::before {
+  color: #ffffff !important;
+}
+
+.ag-theme-alpine.app-grid .ag-header-cell-filtered .ag-icon-filter,
+.ag-theme-alpine.app-grid .ag-header-cell-filtered .ag-icon-filter::before,
+.ag-theme-alpine.app-grid .ag-header-cell-filtered .ag-header-icon,
+.ag-theme-alpine.app-grid .ag-header-cell-filtered .ag-header-icon .ag-icon,
+.ag-theme-alpine.app-grid .ag-header-cell-filtered .ag-header-icon .ag-icon::before,
+.ag-theme-alpine.app-grid .ag-header-cell-filtered .ag-filter-icon,
+.ag-theme-alpine.app-grid .ag-header-cell-filtered .ag-filter-icon::before,
+.ag-theme-alpine.app-grid .ag-header-cell-filtered .ag-header-icon.ag-filter-icon,
+.ag-theme-alpine.app-grid .ag-header-cell-filtered .ag-header-icon.ag-filter-icon .ag-icon,
+.ag-theme-alpine.app-grid .ag-header-cell-filtered .ag-header-icon.ag-filter-icon .ag-icon::before,
+.ag-theme-alpine.app-grid .ag-header-cell-filtered .ag-filter-icon svg,
+.ag-theme-alpine.app-grid .ag-header-cell-filtered .ag-filter-icon svg path,
+.ag-theme-alpine.app-grid .ag-header-cell-filtered .ag-filter-icon svg g {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+  fill: #ffffff !important;
+}
+
+.ag-theme-alpine.app-grid .ag-sort-none-icon:not(.ag-hidden),
+.ag-theme-alpine.app-grid .ag-sort-ascending-icon:not(.ag-hidden),
+.ag-theme-alpine.app-grid .ag-sort-descending-icon:not(.ag-hidden) {
+  display: inline-flex !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.ag-theme-alpine.app-grid .ag-sort-none-icon.ag-hidden,
+.ag-theme-alpine.app-grid .ag-sort-ascending-icon.ag-hidden,
+.ag-theme-alpine.app-grid .ag-sort-descending-icon.ag-hidden {
+  display: none !important;
+}
+
+/* Shared custom sort icon look to match UX (neutral + directional) */
+.ag-theme-alpine.app-grid .gt-sort-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 12px;
+  height: 16px;
+}
+
+.ag-theme-alpine.app-grid .gt-sort-icon svg {
+  width: 10px;
+  height: 14px;
+  display: block;
+  fill: #ffffff;
+}
+
+.ag-theme-alpine.app-grid .gt-sort-icon--none svg {
+  opacity: 0.95;
+}
+
 .ag-theme-alpine .ag-cell {
   border-right: 1px solid #e0e0e0 !important;
 }
@@ -290,6 +361,59 @@
 
 .ag-theme-alpine .ag-floating-filter-button:hover {
   background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Shared manual floating-filter visual contract used by DynamicGrid */
+.ag-theme-alpine.app-grid .ag-floating-filter,
+.ag-theme-alpine.app-grid .ag-floating-filter-body,
+.ag-theme-alpine.app-grid .ag-floating-filter-full-body {
+  height: 38px !important;
+  min-height: 38px !important;
+  padding: 0 8px !important;
+}
+
+.ag-theme-alpine.app-grid .ag-floating-filter .ag-input-wrapper,
+.ag-theme-alpine.app-grid .ag-floating-filter-body .ag-input-wrapper,
+.ag-theme-alpine.app-grid .ag-floating-filter .ag-wrapper,
+.ag-theme-alpine.app-grid .ag-floating-filter-body .ag-wrapper {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.ag-theme-alpine.app-grid .ag-floating-filter-button {
+  display: none !important;
+}
+
+.ag-theme-alpine.app-grid .mfi-manual-floating-filter {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.ag-theme-alpine.app-grid .mfi-floating-filter-input {
+  width: 100%;
+  height: 30px;
+  border: 1px solid #cfd5da;
+  border-radius: 6px;
+  background: #fff;
+  padding: 0 10px;
+  font-size: 12px;
+  line-height: 1;
+  outline: none;
+}
+
+.ag-theme-alpine.app-grid .mfi-floating-filter-input:focus {
+  border-color: #86b7fe;
+  box-shadow: 0 0 0 1px rgba(13, 110, 253, 0.18);
+}
+
+.ag-theme-alpine.app-grid .ag-floating-filter-input,
+.ag-theme-alpine.app-grid .ag-input-field-input:not(.ag-checkbox-input),
+.ag-theme-alpine.app-grid .ag-text-field-input {
+  height: 30px !important;
+  min-height: 30px !important;
+  margin: 0 !important;
 }
 
 /* Hide header filter button */
