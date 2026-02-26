@@ -1,3 +1,71 @@
+const GridManagerLocalPreferenceStore = {
+  mode: 'localStorage',
+
+  buildStorageKey({ screenId, userId }) {
+    return `gridPreferences_${screenId}_${userId}`;
+  },
+
+  readAll(context) {
+    const storageKey = this.buildStorageKey(context);
+    const stored = localStorage.getItem(storageKey);
+    return stored ? JSON.parse(stored) : [];
+  },
+
+  writeAll(context, preferences) {
+    const storageKey = this.buildStorageKey(context);
+    localStorage.setItem(storageKey, JSON.stringify(preferences));
+  },
+
+  async list(context) {
+    return this.readAll(context);
+  },
+
+  async save(context, { preferenceName, visibleColumns, setAsCurrent = true }) {
+    const allPreferences = this.readAll(context);
+    const preferenceId = `pref_${Date.now()}_${Math.random().toString(36).slice(2, 11)}`;
+
+    if (setAsCurrent) {
+      allPreferences.forEach((p) => {
+        p.currentPreference = false;
+      });
+    }
+
+    const existingIndex = allPreferences.findIndex((p) => p.preferenceName === preferenceName);
+    const preference = {
+      preferenceId: existingIndex >= 0 ? allPreferences[existingIndex].preferenceId : preferenceId,
+      preferenceName,
+      visibleColumns,
+      currentPreference: setAsCurrent
+    };
+
+    if (existingIndex >= 0) {
+      allPreferences[existingIndex] = preference;
+    } else {
+      allPreferences.push(preference);
+    }
+
+    this.writeAll(context, allPreferences);
+    return preference;
+  },
+
+  async setCurrent(context, preferenceId) {
+    const allPreferences = this.readAll(context);
+    allPreferences.forEach((p) => {
+      p.currentPreference = p.preferenceId === preferenceId;
+    });
+
+    this.writeAll(context, allPreferences);
+    return allPreferences.find((p) => p.preferenceId === preferenceId) || null;
+  }
+};
+
+function resolveGridPreferenceStore() {
+  if (typeof window !== 'undefined' && window.GridManagerPreferenceStore) {
+    return window.GridManagerPreferenceStore;
+  }
+  return GridManagerLocalPreferenceStore;
+}
+
 function createGridManager(gridApi, gridId) {
   return {
     gridApi: gridApi,
@@ -16,6 +84,18 @@ function createGridManager(gridApi, gridId) {
     },
     currentPreferenceKey: 'default',
     currentPreferenceId: null,
+
+    getPreferenceStoreContext() {
+      return {
+        baseUrl: this.apiConfig.baseUrl,
+        userId: this.apiConfig.userId,
+        screenId: this.apiConfig.screenId
+      };
+    },
+
+    getPreferenceStore() {
+      return resolveGridPreferenceStore();
+    },
 
     async init() {
       console.log('GridManager initializing for grid:', this.gridId, 'with screenId:', this.apiConfig.screenId);
@@ -97,15 +177,12 @@ function createGridManager(gridApi, gridId) {
     },
 
     async fetchPreferences() {
-      // TODO: Replace localStorage with API call when grid preference API is ready
-      // API endpoint: GET /api/gridColumnPreference?userId={userId}&screenId={screenId}
-      // For now, using browser localStorage for client-side preference storage
+      // Preference storage is adapter-backed. Default adapter uses localStorage until backend APIs are integrated.
       try {
-        const storageKey = `gridPreferences_${this.apiConfig.screenId}_${this.apiConfig.userId}`;
-        const stored = localStorage.getItem(storageKey);
+        const store = this.getPreferenceStore();
+        const data = await store.list(this.getPreferenceStoreContext());
 
-        if (stored) {
-          const data = JSON.parse(stored);
+        if (Array.isArray(data) && data.length > 0) {
           const defaultPref = this.savedPreferences['default'];
           this.savedPreferences = { 'default': defaultPref };
 
@@ -126,7 +203,7 @@ function createGridManager(gridApi, gridId) {
             }
           });
 
-          console.log('Loaded preferences from localStorage:', this.savedPreferences);
+          console.log(`Loaded preferences from ${store.mode || 'store'}:`, this.savedPreferences);
 
           if (this.currentPreferenceKey && this.savedPreferences[this.currentPreferenceKey]) {
             const preference = this.savedPreferences[this.currentPreferenceKey];
@@ -139,7 +216,7 @@ function createGridManager(gridApi, gridId) {
           }
         }
       } catch (error) {
-        console.error('Error loading preferences from localStorage:', error);
+        console.error('Error loading preferences from preference store:', error);
       }
     },
 
@@ -163,65 +240,32 @@ function createGridManager(gridApi, gridId) {
     },
 
     async savePreferenceToBackend(preferenceName, visibleColumns, setAsCurrent = true) {
-      // TODO: Replace localStorage with API call when grid preference API is ready
-      // API endpoint: POST /api/gridColumnPreference
-      // Request body: { userId, preferenceName, columnDetails, screenId, currentPreference }
-      // For now, using browser localStorage for client-side preference storage
+      // TODO: Replace adapter with backend store when grid preference API is ready.
       try {
-        const storageKey = `gridPreferences_${this.apiConfig.screenId}_${this.apiConfig.userId}`;
-        const stored = localStorage.getItem(storageKey);
-        const allPreferences = stored ? JSON.parse(stored) : [];
-
-        const preferenceId = `pref_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
-        if (setAsCurrent) {
-          allPreferences.forEach((p) => p.currentPreference = false);
-        }
-
-        const existingIndex = allPreferences.findIndex((p) => p.preferenceName === preferenceName);
-        const preference = {
-          preferenceId: existingIndex >= 0 ? allPreferences[existingIndex].preferenceId : preferenceId,
-          preferenceName: preferenceName,
-          visibleColumns: visibleColumns,
-          currentPreference: setAsCurrent
-        };
-
-        if (existingIndex >= 0) {
-          allPreferences[existingIndex] = preference;
-        } else {
-          allPreferences.push(preference);
-        }
-
-        localStorage.setItem(storageKey, JSON.stringify(allPreferences));
-        console.log('Preference saved to localStorage:', preference);
+        const store = this.getPreferenceStore();
+        const preference = await store.save(this.getPreferenceStoreContext(), {
+          preferenceName,
+          visibleColumns,
+          setAsCurrent
+        });
+        console.log(`Preference saved to ${store.mode || 'store'}:`, preference);
         return preference;
       } catch (error) {
-        console.error('Error saving preference to localStorage:', error);
+        console.error('Error saving preference to preference store:', error);
         this.showToast('Failed to save preference', 'error');
         throw error;
       }
     },
 
     async setCurrentPreference(preferenceId) {
-      // TODO: Replace localStorage with API call when grid preference API is ready
-      // API endpoint: PATCH /api/saveCurrentGridColumnPreference?userId={userId}&preferenceId={preferenceId}&screenId={screenId}
-      // For now, using browser localStorage for client-side preference storage
+      // TODO: Replace adapter with backend store when grid preference API is ready.
       try {
-        const storageKey = `gridPreferences_${this.apiConfig.screenId}_${this.apiConfig.userId}`;
-        const stored = localStorage.getItem(storageKey);
-        const allPreferences = stored ? JSON.parse(stored) : [];
-
-        allPreferences.forEach((p) => {
-          p.currentPreference = (p.preferenceId === preferenceId);
-        });
-
-        localStorage.setItem(storageKey, JSON.stringify(allPreferences));
-
-        const updatedPref = allPreferences.find((p) => p.preferenceId === preferenceId);
-        console.log('Current preference updated in localStorage:', updatedPref);
+        const store = this.getPreferenceStore();
+        const updatedPref = await store.setCurrent(this.getPreferenceStoreContext(), preferenceId);
+        console.log(`Current preference updated in ${store.mode || 'store'}:`, updatedPref);
         return updatedPref;
       } catch (error) {
-        console.error('Error updating current preference in localStorage:', error);
+        console.error('Error updating current preference in preference store:', error);
         this.showToast('Failed to update current preference', 'error');
         throw error;
       }
@@ -393,6 +437,7 @@ function createGridManager(gridApi, gridId) {
       }
 
       this.gridApi.setColumnsVisible([columnKey], show);
+      this.scheduleGridResize();
       console.log(`Column ${columnKey} ${show ? 'shown' : 'hidden'}`);
     },
 
@@ -529,6 +574,7 @@ function createGridManager(gridApi, gridId) {
 
         this.loadPreferencesList();
         this.applyPreference(this.savedPreferences[key]);
+        this.syncCheckboxesWithGrid();
         this.showSuccessModal(preferenceName);
       } catch (error) {
         console.error('Failed to save preference:', error);
@@ -599,6 +645,10 @@ function createGridManager(gridApi, gridId) {
         if (preferenceKey !== 'default' && preference.preferenceId) {
           await this.setCurrentPreference(preference.preferenceId);
           this.currentPreferenceId = preference.preferenceId;
+        } else if (preferenceKey === 'default') {
+          // Persist "default is active" by clearing any stored current custom preference.
+          await this.setCurrentPreference(null);
+          this.currentPreferenceId = null;
         }
 
         this.currentPreferenceKey = preferenceKey;
@@ -608,11 +658,15 @@ function createGridManager(gridApi, gridId) {
           const items = preferenceMenu.querySelectorAll('.dropdown-item');
           items.forEach((item) => item.classList.remove('active'));
 
-          const activeItem = preferenceMenu.querySelector(`label:has(input[value="${preferenceKey}"])`);
+          const activeItem = Array.from(preferenceMenu.querySelectorAll('.dropdown-item')).find((item) => {
+            const input = item.querySelector('input[name="gridPreference"]');
+            return input && input.value === preferenceKey;
+          });
           if (activeItem) activeItem.classList.add('active');
         }
 
         this.applyPreference(preference);
+        this.syncCheckboxesWithGrid();
         this.showAppliedSuccessModal(preference.name);
       } catch (error) {
         console.error('Failed to apply preference:', error);
@@ -650,6 +704,7 @@ function createGridManager(gridApi, gridId) {
 
       const allColumns = this.gridApi.getColumns();
       const allFields = allColumns
+        .filter((col) => !col.getColDef().checkboxSelection)
         .map((col) => col.getColDef().field)
         .filter(Boolean);
 
@@ -685,7 +740,12 @@ function createGridManager(gridApi, gridId) {
         const colDef = col.getColDef();
         const field = colDef.field;
 
-        if (field) {
+        if (colDef.checkboxSelection) {
+          this.gridApi.setColumnsVisible([col.getColId()], true);
+          return;
+        }
+
+        if (field && !colDef.checkboxSelection) {
           const shouldShow = visibleSet.has(field);
           this.gridApi.setColumnsVisible([field], shouldShow);
         }
@@ -694,6 +754,9 @@ function createGridManager(gridApi, gridId) {
       if (columnOrder && columnOrder.length > 0) {
         this.reorderColumns(columnOrder);
       }
+
+      this.scheduleGridResize();
+      this.syncCheckboxesWithGrid();
 
       console.log(`Applied preference: "${preference.name}"`);
     },
@@ -716,7 +779,7 @@ function createGridManager(gridApi, gridId) {
 
       const newColumnOrder = [];
 
-      const checkboxCol = allColumns.find((col) => !col.getColDef().field && col.getColDef().checkboxSelection);
+      const checkboxCol = allColumns.find((col) => col.getColDef().checkboxSelection);
       if (checkboxCol) newColumnOrder.push(checkboxCol);
 
       columnOrder.forEach((field) => {
@@ -729,6 +792,39 @@ function createGridManager(gridApi, gridId) {
       if (actionsCol) newColumnOrder.push(actionsCol);
 
       this.gridApi.moveColumns(newColumnOrder.map((col) => col.getColId()), 0);
+    },
+
+    scheduleGridResize() {
+      if (!this.gridApi) return;
+
+      const gridElement = document.getElementById(this.gridId);
+      const applyResize = () => {
+        if (typeof this.gridApi.refreshHeader === 'function') {
+          this.gridApi.refreshHeader();
+        }
+        if (typeof this.gridApi.resetRowHeights === 'function') {
+          this.gridApi.resetRowHeights();
+        }
+
+        if (typeof DynamicGrid !== 'undefined' && typeof DynamicGrid.scheduleSizeToFit === 'function' && gridElement) {
+          DynamicGrid.scheduleSizeToFit(this.gridApi, gridElement);
+          return;
+        }
+
+        if (typeof this.gridApi.sizeColumnsToFit === 'function') {
+          try {
+            this.gridApi.sizeColumnsToFit();
+          } catch (error) {
+            console.warn('Grid resize skipped:', error);
+          }
+        }
+      };
+
+      requestAnimationFrame(() => {
+        applyResize();
+        setTimeout(applyResize, 100);
+        setTimeout(applyResize, 250);
+      });
     },
 
     reorderRowColumns(row, columnOrder) {

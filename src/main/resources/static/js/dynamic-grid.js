@@ -67,6 +67,70 @@ class ManualApplyFloatingFilter {
 
 const DynamicGrid = {
   autoFitBindings: new WeakMap(),
+  SUPPORTED_TEXT_FILTER_OPERATORS: ['!=', '<>', '>=', '<=', '>', '<', '='],
+
+  showFilterValidationMessage(message) {
+    if (window.GridManager?.currentInstance?.showToast) {
+      window.GridManager.currentInstance.showToast(message, 'error', 2800);
+      return;
+    }
+    console.warn(message);
+  },
+
+  parseTextFilterInput(rawValue, fallbackOperator = 'contains') {
+    if (typeof rawValue !== 'string') {
+      return { value: rawValue, operator: fallbackOperator, isInvalid: false };
+    }
+
+    const trimmed = rawValue.trim();
+    const lowerValue = trimmed.toLowerCase();
+
+    if (lowerValue === 'blank') {
+      return { value: '', operator: 'blank', isInvalid: false };
+    }
+
+    if (lowerValue === 'notblank') {
+      return { value: '', operator: 'notBlank', isInvalid: false };
+    }
+
+    const startsWithOperatorLikeSymbol = /^[!<>=@]/.test(trimmed);
+    const matchedOperator = this.SUPPORTED_TEXT_FILTER_OPERATORS.find((op) => trimmed.startsWith(op));
+
+    if (!matchedOperator) {
+      if (startsWithOperatorLikeSymbol) {
+        return {
+          value: rawValue,
+          operator: fallbackOperator,
+          isInvalid: true,
+          invalidReason:
+            'Invalid operator. Use =, !=, <>, >, <, >=, <=, blank, or notblank.'
+        };
+      }
+
+      return { value: rawValue, operator: fallbackOperator, isInvalid: false };
+    }
+
+    const value = trimmed.substring(matchedOperator.length).trim();
+    if (/^[!<>=@]/.test(value)) {
+      return {
+        value: rawValue,
+        operator: fallbackOperator,
+        isInvalid: true,
+        invalidReason:
+          'Invalid operator format. Use =, !=, <>, >, <, >=, <= followed by a value.'
+      };
+    }
+
+    let operator = fallbackOperator;
+    if (matchedOperator === '!=' || matchedOperator === '<>') operator = 'notEqual';
+    else if (matchedOperator === '>') operator = 'greaterThan';
+    else if (matchedOperator === '<') operator = 'lessThan';
+    else if (matchedOperator === '>=') operator = 'greaterThanOrEqual';
+    else if (matchedOperator === '<=') operator = 'lessThanOrEqual';
+    else if (matchedOperator === '=') operator = 'equals';
+
+    return { value, operator, isInvalid: false };
+  },
 
   scheduleSizeToFit(gridApi, gridElement) {
     if (!gridApi || !gridElement) return;
@@ -298,7 +362,10 @@ const DynamicGrid = {
     if (config.manualFilterApply) {
       grid.applyPendingFloatingFilters = () => {
         if (!Array.isArray(grid.__manualFloatingFilters)) return;
-        grid.__manualFloatingFilters.forEach((f) => {
+        // Apply a snapshot because applying a filter can refresh the grid and mutate/destroy
+        // floating filter components, which would otherwise skip later filters in the live array.
+        const pendingFilters = [...grid.__manualFloatingFilters];
+        pendingFilters.forEach((f) => {
           if (f && typeof f.apply === 'function') {
             f.apply();
           }
@@ -353,7 +420,10 @@ const DynamicGrid = {
 
         // Add filters with operator support and parse operators from text
         if (params.filterModel) {
+          let invalidFilterMessage = null;
+
           Object.keys(params.filterModel).forEach(field => {
+            if (invalidFilterMessage) return;
             const filter = params.filterModel[field];
             console.log('Processing field:', field, 'filter:', filter);
             if (filter.filter !== undefined && filter.filter !== null && filter.filter !== '') {
@@ -362,34 +432,14 @@ const DynamicGrid = {
 
               // Parse operator from text if user typed it
               if (typeof value === 'string') {
-                const lowerValue = value.trim().toLowerCase();
-
-                if (lowerValue === 'blank') {
-                  operator = 'blank';
-                  value = '';
-                } else if (lowerValue === 'notblank') {
-                  operator = 'notBlank';
-                  value = '';
-                } else {
-                  console.log('Testing regex on value:', JSON.stringify(value), 'type:', typeof value);
-                  const operatorMatch = value.match(/^(!=|<>|>=|<=|>|<|=)/);
-                  console.log('Regex match result:', operatorMatch);
-                  if (operatorMatch) {
-                    const op = operatorMatch[1];
-                    value = value.substring(op.length).trim();
-
-                    if (op === '!=' || op === '<>') operator = 'notEqual';
-                    else if (op === '>') operator = 'greaterThan';
-                    else if (op === '<') operator = 'lessThan';
-                    else if (op === '>=') operator = 'greaterThanOrEqual';
-                    else if (op === '<=') operator = 'lessThanOrEqual';
-                    else if (op === '=') operator = 'equals';
-
-                    console.log('DETECTED OPERATOR:', op, '->', operator, 'value now:', value);
-                  } else {
-                    console.log('NO OPERATOR DETECTED - regex did not match');
-                  }
+                const parsedInput = this.parseTextFilterInput(value, operator || 'contains');
+                if (parsedInput.isInvalid) {
+                  invalidFilterMessage = `${field}: ${parsedInput.invalidReason}`;
+                  return;
                 }
+
+                value = parsedInput.value;
+                operator = parsedInput.operator;
               }
 
               if (operator === 'blank' || operator === 'notBlank') {
@@ -406,6 +456,12 @@ const DynamicGrid = {
               }
             }
           });
+
+          if (invalidFilterMessage) {
+            this.showFilterValidationMessage(invalidFilterMessage);
+            params.failCallback();
+            return;
+          }
         }
 
         const queryString = urlParams.toString();

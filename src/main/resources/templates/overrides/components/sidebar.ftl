@@ -39,6 +39,11 @@
                         <span class="text">CAMS Eligibility</span>
                     </a>
                 </li>
+                <li class="submenu-item">
+                    <a href="/manage-kvi-recommendation-logic-view-output-data" class="submenu-link" title="Manage KVI Recommendation Logic and View Output Data">
+                        <span class="text">Manage KVI Recommendation Logic and View Output Data</span>
+                    </a>
+                </li>
             </ul>
         </li>
     </ul>

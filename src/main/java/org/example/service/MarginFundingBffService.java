@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,32 @@ public class MarginFundingBffService {
     private final List<Map<String, Object>> customerMaintenanceStubRows = IntStream.rangeClosed(1, 250)
             .mapToObj(this::buildCustomerMaintenanceRow)
             .collect(Collectors.toList());
+
+    public Map<String, Object> disableItems(List<String> uniqueKeys, String notes) {
+        return applyDisable(stubRows, uniqueKeys, notes);
+    }
+
+    public Map<String, Object> disableCustomerMaintenance(List<String> uniqueKeys, String notes) {
+        return applyDisable(customerMaintenanceStubRows, uniqueKeys, notes);
+    }
+
+    public Map<String, Object> updateItemTerminationDate(
+            List<String> uniqueKeys, String terminationDate, String notes) {
+        return applyTerminationDateUpdate(stubRows, uniqueKeys, terminationDate, notes);
+    }
+
+    public Map<String, Object> updateCustomerTerminationDate(
+            List<String> uniqueKeys, String terminationDate, String notes) {
+        return applyTerminationDateUpdate(customerMaintenanceStubRows, uniqueKeys, terminationDate, notes);
+    }
+
+    public boolean hasDisabledItems(List<String> uniqueKeys) {
+        return hasDisabledRows(stubRows, uniqueKeys);
+    }
+
+    public boolean hasDisabledCustomerMaintenance(List<String> uniqueKeys) {
+        return hasDisabledRows(customerMaintenanceStubRows, uniqueKeys);
+    }
 
     public Map<String, Object> search(
             Integer page,
@@ -98,6 +125,69 @@ public class MarginFundingBffService {
         response.put("data", content);
         response.put("total", total);
         return response;
+    }
+
+    private Map<String, Object> applyDisable(List<Map<String, Object>> dataset, List<String> uniqueKeys, String notes) {
+        Set<String> keys = sanitizeKeys(uniqueKeys);
+        int updatedCount = 0;
+        String today = LocalDate.now().format(DATE_FMT);
+        String noteValue = (notes == null || notes.isBlank()) ? "Disabled" : notes.trim();
+
+        for (Map<String, Object> row : dataset) {
+            if (!keys.contains(String.valueOf(row.get("uniqueKey")))) {
+                continue;
+            }
+            row.put("disableDate", today);
+            row.put("notes", noteValue);
+            updatedCount++;
+        }
+
+        return Map.of("success", true, "updatedCount", updatedCount, "disableDate", today);
+    }
+
+    private boolean hasDisabledRows(List<Map<String, Object>> dataset, List<String> uniqueKeys) {
+        Set<String> keys = sanitizeKeys(uniqueKeys);
+        if (keys.isEmpty()) {
+            return false;
+        }
+        return dataset.stream()
+                .filter(row -> keys.contains(String.valueOf(row.get("uniqueKey"))))
+                .anyMatch(row -> {
+                    Object disableDate = row.get("disableDate");
+                    return disableDate != null && !String.valueOf(disableDate).trim().isBlank();
+                });
+    }
+
+    private Map<String, Object> applyTerminationDateUpdate(
+            List<Map<String, Object>> dataset, List<String> uniqueKeys, String terminationDate, String notes) {
+        Set<String> keys = sanitizeKeys(uniqueKeys);
+        int updatedCount = 0;
+        String resolvedTerminationDate =
+                (terminationDate == null || terminationDate.isBlank()) ? "" : terminationDate.trim();
+        String noteValue =
+                (notes == null || notes.isBlank()) ? "Termination date updated" : notes.trim();
+
+        for (Map<String, Object> row : dataset) {
+            if (!keys.contains(String.valueOf(row.get("uniqueKey")))) {
+                continue;
+            }
+            row.put("terminationDate", resolvedTerminationDate);
+            row.put("notes", noteValue);
+            updatedCount++;
+        }
+
+        return Map.of(
+                "success", true, "updatedCount", updatedCount, "terminationDate", resolvedTerminationDate);
+    }
+
+    private Set<String> sanitizeKeys(List<String> uniqueKeys) {
+        if (uniqueKeys == null) {
+            return Set.of();
+        }
+        return uniqueKeys.stream()
+                .filter(key -> key != null && !key.isBlank())
+                .map(String::trim)
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
     private void applySort(List<Map<String, Object>> rows, String sortBy, String direction) {
@@ -219,6 +309,9 @@ public class MarginFundingBffService {
         row.put("marginFundingPercentType", i % 2 == 0 ? "Flat" : "Tiered");
         row.put("effectiveFrom", "01/01/2026");
         row.put("effectiveThru", "12/31/2026");
+        row.put("notes", "");
+        row.put("disableDate", "");
+        row.put("terminationDate", "");
         row.put("userId", "USER" + (100 + (i % 8)));
         row.put("dateUpdated", "01/15/2026");
         row.put("timeUpdated", String.format("%02d:30:00", 9 + (i % 8)));
@@ -239,6 +332,9 @@ public class MarginFundingBffService {
         row.put("ieFlag", i % 3 == 0 ? "E" : "I");
         row.put("effectiveFrom", "01/01/2026");
         row.put("effectiveThru", "12/31/2026");
+        row.put("notes", "");
+        row.put("disableDate", "");
+        row.put("terminationDate", "");
         row.put("programId", "PGM-" + (3000 + (i % 12)));
         row.put("workStnId", "WS" + (200 + (i % 6)));
         row.put("userId", "USER" + (100 + (i % 8)));

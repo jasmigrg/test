@@ -108,4 +108,16 @@
     </button>
   </div>
 </div>
+
+<div id="appliedSuccessModal" class="success-modal">
+  <div class="success-modal-content">
+    <div class="success-icon">
+      <i class="fas fa-check"></i>
+    </div>
+    <div class="success-message">Preference applied successfully!</div>
+    <button type="button" class="btn btn-primary" onclick="GridManager.closeAppliedSuccessModal()" style="margin-top: 20px;">
+      OK
+    </button>
+  </div>
+</div>
 </#macro>

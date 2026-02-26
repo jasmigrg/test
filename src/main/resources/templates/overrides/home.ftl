@@ -28,6 +28,7 @@
         <a class="primary" href="${ctx}/margin-funding-maintenance" style="display: inline-block; text-decoration: none; text-align: center; margin-top: 10px;">Go to Margin Funding Item Maintenance</a>
         <a class="primary" href="${ctx}/margin-funding-customer-maintenance" style="display: inline-block; text-decoration: none; text-align: center; margin-top: 10px;">Go to Margin Funding Customer Maintenance</a>
         <a class="primary" href="${ctx}/cams-eligibility" style="display: inline-block; text-decoration: none; text-align: center; margin-top: 10px;">Go to CAMS Eligibility</a>
+        <a class="primary" href="${ctx}/manage-kvi-recommendation-logic-view-output-data" style="display: inline-block; text-decoration: none; text-align: center; margin-top: 10px;">Go to Manage KVI Recommendation Logic and View Output Data</a>
       </div>
     </main>
   </div>

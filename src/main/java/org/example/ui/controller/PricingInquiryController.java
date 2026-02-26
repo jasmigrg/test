@@ -20,6 +20,16 @@ public class PricingInquiryController {
     return "pricing/margin-funding-customer-maintenance";
   }
 
+  @GetMapping("/cams-eligibility")
+  public String camsEligibility() {
+    return "pricing/cams-eligibility";
+  }
+
+  @GetMapping("/manage-kvi-recommendation-logic-view-output-data")
+  public String manageKviRecommendationLogicViewOutputData() {
+    return "pricing/manage-kvi-recommendation-logic-view-output-data";
+  }
+
   @GetMapping("/")
   public String home() {
     return "home";
