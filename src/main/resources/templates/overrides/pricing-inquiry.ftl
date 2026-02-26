@@ -22,22 +22,25 @@
         crumbs=[{"label":"Home","href":"${ctx}/"},{"label":"Pricing Inquiry"}]
       />
 
+      <#assign iconBack><svg class="back-arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" /></svg></#assign>
+      <#assign iconClear><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14M9 6l1-2h4l1 2M8 6l1 14h6l1-14"/></svg></#assign>
+      <#assign iconForm><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM7 8h10M7 12h10M7 16h6"/></svg></#assign>
+      <#assign iconTools><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-4v3m0 12v3m-9-9h3m12 0h3m-2.12-6.88l-2.12 2.12m-9.52 9.52l-2.12 2.12m0-11.64l2.12 2.12m9.52 9.52l2.12 2.12"/></svg></#assign>
+
       <div class="toolbar">
         <a class="tool-btn danger back-home" href="${ctx}/" aria-label="Back to Home">
-          <svg class="back-arrow" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M15 6l-6 6 6 6" />
-          </svg>
+          ${iconBack}
         </a>
         <button class="tool-btn" type="button" data-action="clear">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6h14M9 6l1-2h4l1 2M8 6l1 14h6l1-14"/></svg>
+          ${iconClear}
           Clear
         </button>
         <button class="tool-btn">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v16H5zM7 8h10M7 12h10M7 16h6"/></svg>
+          ${iconForm}
           Form
         </button>
         <button class="tool-btn">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 7a5 5 0 100 10 5 5 0 000-10zm0-4v3m0 12v3m-9-9h3m12 0h3m-2.12-6.88l-2.12 2.12m-9.52 9.52l-2.12 2.12m0-11.64l2.12 2.12m9.52 9.52l2.12 2.12"/></svg>
+          ${iconTools}
           Tools
         </button>
       </div>

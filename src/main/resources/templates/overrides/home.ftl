@@ -7,6 +7,67 @@
   <#assign ctx = (request.contextPath)!"" />
   <link rel="stylesheet" href="${ctx}/css/app.css" />
   <link rel="stylesheet" href="${ctx}/css/pricing-inquiry.css" />
+  <style>
+    .home-card {
+      max-width: 720px;
+    }
+
+    .home-nav-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .home-nav-link {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 86px;
+      width: 100%;
+      text-decoration: none;
+      text-align: center;
+      line-height: 1.3;
+      padding: 12px 14px;
+    }
+  </style><!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Home</title>
+            <#assign ctx = (request.contextPath)!"" />
+            <link rel="stylesheet" href="${ctx}/css/app.css" />
+            <link rel="stylesheet" href="${ctx}/css/pricing-inquiry.css" />
+            <style>
+              .home-card {
+                max-width: 720px;
+              }
+
+              .home-nav-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+                gap: 12px;
+                margin-top: 16px;
+              }
+
+              .home-nav-link {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 86px;
+                width: 100%;
+                text-decoration: none;
+                text-align: center;
+                line-height: 1.3;
+                padding: 12px 14px;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="app-shell">
+              <#include "components/header.ftl">
+
 </head>
 <body>
   <div class="app-shell">
@@ -21,14 +82,16 @@
         title="Home"
         crumbs=[{"label":"Home"}]
       />
-      <div class="card" style="max-width: 520px;">
+      <div class="card home-card">
         <h2>Home</h2>
-        <p style="margin: 10px 0 16px;">Use the links below to open the demo screens.</p>
-        <a class="primary" href="${ctx}/pricing-inquiry" style="display: inline-block; text-decoration: none; text-align: center;">Go to Pricing Inquiry</a>
-        <a class="primary" href="${ctx}/margin-funding-maintenance" style="display: inline-block; text-decoration: none; text-align: center; margin-top: 10px;">Go to Margin Funding Item Maintenance</a>
-        <a class="primary" href="${ctx}/margin-funding-customer-maintenance" style="display: inline-block; text-decoration: none; text-align: center; margin-top: 10px;">Go to Margin Funding Customer Maintenance</a>
-        <a class="primary" href="${ctx}/cams-eligibility" style="display: inline-block; text-decoration: none; text-align: center; margin-top: 10px;">Go to CAMS Eligibility</a>
-        <a class="primary" href="${ctx}/manage-kvi-recommendation-logic-view-output-data" style="display: inline-block; text-decoration: none; text-align: center; margin-top: 10px;">Go to Manage KVI Recommendation Logic and View Output Data</a>
+        <p style="margin: 10px 0 0;">Use the links below to open the demo screens.</p>
+        <div class="home-nav-grid">
+          <a class="primary home-nav-link" href="${ctx}/pricing-inquiry">Go to Pricing Inquiry</a>
+          <a class="primary home-nav-link" href="${ctx}/margin-funding-maintenance">Go to Margin Funding Item Maintenance</a>
+          <a class="primary home-nav-link" href="${ctx}/margin-funding-customer-maintenance">Go to Margin Funding Customer Maintenance</a>
+          <a class="primary home-nav-link" href="${ctx}/cams-eligibility">Go to CAMS Eligibility</a>
+          <a class="primary home-nav-link" href="${ctx}/manage-kvi-recommendation-logic-view-output-data">Go to Manage KVI Recommendation Logic and View Output Data</a>
+        </div>
       </div>
     </main>
   </div>
