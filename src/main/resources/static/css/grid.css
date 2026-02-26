@@ -265,6 +265,37 @@
   margin: 0 !important;
 }
 
+/* Show a clear disabled state for non-selectable row checkboxes */
+.ag-theme-alpine .ag-cell[col-id="select"].is-selection-locked .ag-checkbox-input-wrapper {
+  border: 1px solid #b8c0c6 !important;
+  border-radius: 3px !important;
+  background:
+    linear-gradient(135deg, transparent 44%, #9aa4ab 45%, #9aa4ab 55%, transparent 56%),
+    #eef2f4 !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important;
+}
+
+.ag-theme-alpine .ag-cell[col-id="select"].is-selection-locked .ag-checkbox-input-wrapper input {
+  cursor: not-allowed !important;
+}
+
+.ag-theme-alpine .ag-cell[col-id="select"] .ag-checkbox-input-wrapper.ag-disabled,
+.ag-theme-alpine .ag-cell[col-id="select"] .ag-checkbox-input-wrapper[aria-disabled="true"] {
+  border: 1px solid #b8c0c6 !important;
+  border-radius: 3px !important;
+  background:
+    linear-gradient(135deg, transparent 44%, #9aa4ab 45%, #9aa4ab 55%, transparent 56%),
+    #eef2f4 !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important;
+}
+
+.ag-theme-alpine .ag-cell[col-id="select"] .ag-checkbox-input-wrapper.ag-disabled input,
+.ag-theme-alpine .ag-cell[col-id="select"] .ag-checkbox-input-wrapper[aria-disabled="true"] input {
+  cursor: not-allowed !important;
+}
+
 /* Floating filter styling */
 .ag-theme-alpine .ag-floating-filter {
   background-color: #007c91 !important;

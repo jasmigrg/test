@@ -584,7 +584,8 @@ const MarginFundingMaintenanceManager = {
         suppressRowClickSelection: true,
         isRowSelectable: (rowNode) => {
           const row = rowNode?.data;
-          return String(row?.disableDate || '').trim() === '';
+          return String(row?.disableDate || '').trim() === ''
+            && String(row?.terminationDate || '').trim() === '';
         },
         icons: {
           sortUnSort:
@@ -613,6 +614,13 @@ const MarginFundingMaintenanceManager = {
           field: 'select',
           headerName: '',
           checkboxSelection: true,
+          cellClassRules: {
+            'is-selection-locked': (params) => {
+              const row = params?.data;
+              return String(row?.disableDate || '').trim() !== ''
+                || String(row?.terminationDate || '').trim() !== '';
+            }
+          },
           headerComponent: 'gtPageSelectHeader',
           width: 44,
           minWidth: 44,
