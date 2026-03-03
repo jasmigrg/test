@@ -91,8 +91,10 @@ const KviRecommendationLogicPage = {
   toolbarScope: '.kvi-page-shell',
   gridManagerBootstrapped: false,
   gridManagerInitScheduled: false,
+  kviApiBaseUrl: '',
 
   init() {
+    this.kviApiBaseUrl = (window.KVI_API_BASE_URL || '').replace(/\/$/, '');
     this.cacheDom();
     this.bindTabs();
     this.bindToolbarActions();
@@ -297,12 +299,18 @@ const KviRecommendationLogicPage = {
       parameter: {
         gridElementId: 'kviParameterGrid',
         columns: this.parameterColumns(),
-        apiEndpoint: '/api/kvi-recommendation/parameter/paginated'
+        apiEndpoint: `${this.kviApiBaseUrl}/api/v1/kviRecommendationParameter`,
+        pageSizeParam: 'size',
+        sortFieldMap: this.parameterSortFieldMap(),
+        dataTransformer: (row) => this.transformParameterRow(row)
       },
       output: {
         gridElementId: 'kviOutputGrid',
         columns: this.outputColumns(),
-        apiEndpoint: '/api/kvi-recommendation/output/paginated'
+        apiEndpoint: `${this.kviApiBaseUrl}/api/v1/kviRecommendationOutput`,
+        pageSizeParam: 'size',
+        sortFieldMap: this.outputSortFieldMap(),
+        dataTransformer: (row) => this.transformOutputRow(row)
       }
     };
 
@@ -317,7 +325,12 @@ const KviRecommendationLogicPage = {
       floatingFilter: true,
       manualFilterApply: true,
       apiEndpoint: tabConfig.apiEndpoint,
+      dataTransformer: tabConfig.dataTransformer,
       gridOptions: {
+        onGridReady: (params) => {
+          const datasource = this.buildKviDatasource(tabConfig);
+          params.api.setGridOption('datasource', datasource);
+        },
         rowSelection: 'multiple',
         suppressRowClickSelection: false,
         icons: {
@@ -423,16 +436,48 @@ const KviRecommendationLogicPage = {
       { field: 'prcaNum', headerName: 'PRCA Num', minWidth: 130 },
       { field: 'customerCluster', headerName: 'Customer Cluster', minWidth: 170 },
       { field: 'effectiveDate', headerName: 'Effective Date', minWidth: 150 },
+      { field: 'terminationDate', headerName: 'Termination Date', minWidth: 170 },
       { field: 'itemNum', headerName: 'Item Num', minWidth: 130 },
       { field: 'itemFamily', headerName: 'Item Family', minWidth: 150 },
       { field: 'itemCategory', headerName: 'Item Category', minWidth: 160 },
       { field: 'itemGroup', headerName: 'Item Group', minWidth: 150 },
       { field: 'itemSubCategory', headerName: 'Item Sub Category', minWidth: 190 },
+      { field: 'likeItemGroup', headerName: 'Like Item Group', minWidth: 170 },
       { field: 'itemDescription', headerName: 'Item Description', minWidth: 210 },
       { field: 'itemSegmentation', headerName: 'Item Segmentation', minWidth: 180 },
       { field: 'finalBaseMargin', headerName: 'Final Base Margin', minWidth: 170 },
+      { field: 'finalTargetMargin', headerName: 'Final Target Margin', minWidth: 180 },
       { field: 'finalPremiumMargin', headerName: 'Final Premium Margin', minWidth: 190 }
     ];
+  },
+
+  parameterSortFieldMap() {
+    return {
+      effectiveDate: 'effective_date',
+      terminationDate: 'termination_date',
+      prcaMinThreshold: 'prca_min_threshold',
+      dedupMethod: 'dedup_method'
+    };
+  },
+
+  outputSortFieldMap() {
+    return {
+      prcaNum: 'prca_num',
+      customerCluster: 'customer_cluster',
+      effectiveDate: 'effective_date',
+      terminationDate: 'termination_date',
+      itemNum: 'item_num',
+      itemFamily: 'item_family',
+      itemCategory: 'item_category',
+      itemGroup: 'item_group',
+      itemSubCategory: 'item_sub_category',
+      likeItemGroup: 'like_item_group',
+      itemDescription: 'item_description',
+      itemSegmentation: 'item_segmentation',
+      finalBaseMargin: 'final_base_margin',
+      finalTargetMargin: 'final_target_margin',
+      finalPremiumMargin: 'final_premium_margin'
+    };
   },
 
   buildParameterRows(count) {
@@ -454,16 +499,130 @@ const KviRecommendationLogicPage = {
       prcaNum: `PRCA-${1200 + index}`,
       customerCluster: `Cluster ${String.fromCharCode(65 + (index % 5))}`,
       effectiveDate: `01/${String((index % 27) + 1).padStart(2, '0')}/2026`,
+      terminationDate: `12/${String((index % 27) + 1).padStart(2, '0')}/2026`,
       itemNum: `${500000 + index}`,
       itemFamily: `Family ${1 + (index % 7)}`,
       itemCategory: categories[index % categories.length],
       itemGroup: groups[index % groups.length],
       itemSubCategory: `SubCat ${1 + (index % 6)}`,
+      likeItemGroup: `Like Group ${1 + (index % 4)}`,
       itemDescription: `KVI Recommended Item ${index + 1}`,
       itemSegmentation: segments[index % segments.length],
       finalBaseMargin: `${(12 + (index % 9) * 0.9).toFixed(2)}%`,
+      finalTargetMargin: `${(15 + (index % 10) * 0.8).toFixed(2)}%`,
       finalPremiumMargin: `${(18 + (index % 11) * 0.85).toFixed(2)}%`
     }));
+  },
+
+  formatIsoDate(value) {
+    if (!value || typeof value !== 'string') return value;
+    const match = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!match) return value;
+    return `${match[2]}/${match[3]}/${match[1]}`;
+  },
+
+  formatDateValue(value) {
+    if (!value) return value;
+    if (Array.isArray(value) && value.length >= 3) {
+      const [year, month, day] = value;
+      return `${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')}/${year}`;
+    }
+    return this.formatIsoDate(value);
+  },
+
+  transformParameterRow(row) {
+    if (!row || typeof row !== 'object') return row;
+    return {
+      ...row,
+      effectiveDate: this.formatDateValue(row.effectiveDate || row.effective_date),
+      terminationDate: this.formatDateValue(row.terminationDate || row.termination_date),
+      prcaMinThreshold: row.prcaMinThreshold ?? row.prca_min_threshold,
+      dedupMethod: row.dedupMethod ?? row.dedup_method
+    };
+  },
+
+  transformOutputRow(row) {
+    if (!row || typeof row !== 'object') return row;
+    return {
+      ...row,
+      effectiveDate: this.formatIsoDate(row.effectiveDate),
+      terminationDate: this.formatIsoDate(row.terminationDate)
+    };
+  },
+
+  buildKviDatasource(tabConfig) {
+    return {
+      rowCount: null,
+      getRows: (params) => {
+        const pageSize = params.endRow - params.startRow;
+        const pageNum = Math.floor(params.startRow / (pageSize || 20));
+        const urlParams = new URLSearchParams();
+
+        urlParams.append('page', String(pageNum));
+        urlParams.append(tabConfig.pageSizeParam || 'size', String(pageSize));
+
+        if (params.sortModel && params.sortModel.length > 0) {
+          const sortModel = params.sortModel[0];
+          const sortField = (tabConfig.sortFieldMap && tabConfig.sortFieldMap[sortModel.colId]) || sortModel.colId;
+          urlParams.append('sortBy', sortField);
+          urlParams.append('sortDir', sortModel.sort);
+        }
+
+        if (params.filterModel) {
+          Object.keys(params.filterModel).forEach((field) => {
+            const filter = params.filterModel[field];
+            if (!filter || filter.filter === undefined || filter.filter === null || filter.filter === '') return;
+            const filterField = (tabConfig.sortFieldMap && tabConfig.sortFieldMap[field]) || field;
+            urlParams.append(filterField, filter.filter);
+            if (filter.type) {
+              urlParams.append(`${filterField}_op`, filter.type);
+            }
+          });
+        }
+
+        const apiUrl = `${tabConfig.apiEndpoint}?${urlParams.toString()}`;
+
+        fetch(apiUrl)
+          .then((response) => response.json())
+          .then((responseBody) => {
+            let rows = this.extractRowsFromResponse(responseBody);
+            if (tabConfig.dataTransformer) {
+              rows = rows.map(tabConfig.dataTransformer);
+            }
+
+            const total = this.extractTotalFromResponse(responseBody);
+            const lastRow = Number.isFinite(total)
+              ? total
+              : (rows.length < pageSize ? params.startRow + rows.length : -1);
+
+            params.successCallback(rows, lastRow);
+          })
+          .catch((error) => {
+            console.error('KVI datasource fetch failed:', error);
+            params.failCallback();
+          });
+      }
+    };
+  },
+
+  extractRowsFromResponse(responseBody) {
+    if (!responseBody) return [];
+    if (Array.isArray(responseBody)) return responseBody;
+    if (Array.isArray(responseBody.data)) return responseBody.data;
+    if (responseBody.data && Array.isArray(responseBody.data.content)) return responseBody.data.content;
+    if (Array.isArray(responseBody.content)) return responseBody.content;
+    return [];
+  },
+
+  extractTotalFromResponse(responseBody) {
+    if (!responseBody || typeof responseBody !== 'object') return null;
+    if (typeof responseBody.total === 'number') return responseBody.total;
+    if (typeof responseBody.totalElements === 'number') return responseBody.totalElements;
+    if (responseBody.data && typeof responseBody.data.total === 'number') return responseBody.data.total;
+    if (responseBody.data && typeof responseBody.data.totalElements === 'number') {
+      return responseBody.data.totalElements;
+    }
+    return null;
   }
 };
 
