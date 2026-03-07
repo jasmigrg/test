@@ -1,5 +1,6 @@
 .kvi-page .content-card {
   gap: 8px;
+  position: relative;
 }
 
 .kvi-page-shell {

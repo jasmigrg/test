@@ -1,10 +1,15 @@
 package com.example.pricing.controller.ui;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class PricingInquiryController {
+  @Value("${api.base-url:}")
+  private String apiBaseUrl;
+
   @GetMapping("/pricing-inquiry")
   public String pricingInquiry() {
     return "pricing/pricing-inquiry";
@@ -26,8 +31,25 @@ public class PricingInquiryController {
   }
 
   @GetMapping("/manage-kvi-recommendation-logic-view-output-data")
-  public String manageKviRecommendationLogicViewOutputData() {
-    return "pricing/manage-kvi-recommendation-logic-view-output-data";
+  public String manageKviRecommendationLogicViewOutputData(Model model) {
+    model.addAttribute("apiBaseUrl", apiBaseUrl);
+    return "guidance-model-management/manage-kvi-recommendation-logic-view-output-data";
+  }
+
+  @GetMapping("/manage-kvi-recommendation-logic-view-output-data/add")
+  public String manageKviRecommendationLogicAdd(Model model) {
+    model.addAttribute("apiBaseUrl", apiBaseUrl);
+    return "guidance-model-management/manage-kvi-recommendation-logic-add";
+  }
+
+  @GetMapping("/price-rules-reason-codes")
+  public String priceRulesReasonCodes() {
+    return "pricing/price-rules-reason-codes";
+  }
+
+  @GetMapping("/price-rules-reason-codes/add")
+  public String priceRulesReasonCodesAdd() {
+    return "pricing/price-rules-reason-codes-add";
   }
 
   @GetMapping("/")

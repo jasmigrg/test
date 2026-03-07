@@ -59,22 +59,195 @@ const GridManagerLocalPreferenceStore = {
   }
 };
 
-function resolveGridPreferenceStore() {
+const GUIDANCE_API_PATH = '/api/v1/guidance-engine';
+
+function getCurrentUserId() {
+  const currentUserInput = document.getElementById('currentUserId');
+  const currentUserId = currentUserInput?.value?.trim();
+  return currentUserId || 'defaultUser';
+}
+
+function resolveGuidanceApiBaseUrl(rawBaseUrl) {
+  const normalized = String(rawBaseUrl || '').trim().replace(/\/$/, '');
+  if (!normalized) return GUIDANCE_API_PATH;
+  if (normalized.includes(GUIDANCE_API_PATH)) return normalized;
+  return `${normalized}${GUIDANCE_API_PATH}`;
+}
+
+function resolveGridPreferenceRuntimeConfig(gridId, overrides = {}) {
+  const screenByGrid = window.GRID_PREF_SCREEN_ID_BY_GRID || {};
+  const userByGrid = window.GRID_PREF_USER_ID_BY_GRID || {};
+  const baseByGrid = window.GRID_PREF_API_BASE_URL_BY_GRID || {};
+
+  const baseUrl = resolveGuidanceApiBaseUrl(
+    overrides.baseUrl
+      || baseByGrid[gridId]
+      || window.API_BASE_URL
+      || window.GUIDANCE_API_BASE_URL
+      || window.KVI_API_BASE_URL
+      || ''
+  );
+
+  return {
+    baseUrl,
+    userId: overrides.userId || userByGrid[gridId] || window.GRID_PREF_TEST_USER_ID || getCurrentUserId(),
+    screenId: overrides.screenId || screenByGrid[gridId] || window.GRID_PREF_SCREEN_ID || `id_${gridId}`
+  };
+}
+
+function parseColumnDetails(columnDetails) {
+  if (Array.isArray(columnDetails)) return columnDetails;
+  if (typeof columnDetails !== 'string') return [];
+  try {
+    const parsed = JSON.parse(columnDetails);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.warn('Unable to parse columnDetails string:', error);
+    return [];
+  }
+}
+
+function toColumnDetails(visibleColumns) {
+  return (Array.isArray(visibleColumns) ? visibleColumns : []).map((columnName, index) => ({
+    columnName,
+    order: index + 1
+  }));
+}
+
+function normalizePreference(rawPreference) {
+  if (!rawPreference || typeof rawPreference !== 'object') return null;
+
+  const columnDetails = parseColumnDetails(rawPreference.columnDetails);
+  const orderedColumnDetails = columnDetails.slice().sort((a, b) => {
+    const left = Number.isFinite(Number(a?.order)) ? Number(a.order) : Number.MAX_SAFE_INTEGER;
+    const right = Number.isFinite(Number(b?.order)) ? Number(b.order) : Number.MAX_SAFE_INTEGER;
+    return left - right;
+  });
+  const orderedColumns = orderedColumnDetails
+    .map((column) => column?.columnName)
+    .filter((columnName) => Boolean(columnName));
+
+  return {
+    userId: rawPreference.userId,
+    preferenceId: rawPreference.preferenceId,
+    preferenceName: rawPreference.preferenceName,
+    screenId: rawPreference.screenId,
+    currentPreference: Boolean(rawPreference.currentPreference),
+    columnDetails: orderedColumnDetails,
+    visibleColumns: orderedColumns,
+    columnOrder: orderedColumns
+  };
+}
+
+function normalizePreferenceList(data) {
+  const rawList = Array.isArray(data) ? data : (data ? [data] : []);
+  return rawList.map(normalizePreference).filter(Boolean);
+}
+
+async function fetchJson(url, options = {}) {
+  const response = await fetch(url, options);
+  const payload = await response.json().catch(() => null);
+  if (!response.ok) {
+    const errorMessage = payload?.message || `Request failed with status ${response.status}`;
+    throw new Error(errorMessage);
+  }
+  return payload;
+}
+
+const GridManagerApiPreferenceStore = {
+  mode: 'guidanceApi',
+
+  isEnabled(context) {
+    return Boolean(context?.baseUrl && context?.userId && context?.screenId);
+  },
+
+  async list(context) {
+    if (!this.isEnabled(context)) {
+      throw new Error('Grid preference API config is missing');
+    }
+
+    const url = new URL(`${context.baseUrl}/gridColumnPreference`, window.location.origin);
+    url.searchParams.set('userId', context.userId);
+    url.searchParams.set('screenId', context.screenId);
+
+    const payload = await fetchJson(url.toString(), {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json'
+      }
+    });
+
+    return normalizePreferenceList(payload?.data);
+  },
+
+  async save(context, { preferenceName, visibleColumns, setAsCurrent = true }) {
+    if (!this.isEnabled(context)) {
+      throw new Error('Grid preference API config is missing');
+    }
+
+    const payload = await fetchJson(`${context.baseUrl}/gridColumnPreference`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        userId: context.userId,
+        preferenceName,
+        columnDetails: toColumnDetails(visibleColumns),
+        screenId: context.screenId,
+        currentPreference: Boolean(setAsCurrent)
+      })
+    });
+
+    const normalized = normalizePreference(payload?.data);
+    if (!normalized) {
+      throw new Error('Save preference response is missing data');
+    }
+    return normalized;
+  },
+
+  async setCurrent(context, preferenceId) {
+    if (!preferenceId) {
+      return null;
+    }
+
+    if (!this.isEnabled(context)) {
+      throw new Error('Grid preference API config is missing');
+    }
+
+    const url = new URL(`${context.baseUrl}/saveCurrentGridColumnPreference`, window.location.origin);
+    url.searchParams.set('userId', context.userId);
+    url.searchParams.set('preferenceId', preferenceId);
+    url.searchParams.set('screenId', context.screenId);
+
+    const payload = await fetchJson(url.toString(), {
+      method: 'PATCH',
+      headers: {
+        Accept: 'application/json'
+      }
+    });
+
+    return normalizePreference(payload?.data);
+  }
+};
+
+function resolveGridPreferenceStore(context) {
   if (typeof window !== 'undefined' && window.GridManagerPreferenceStore) {
     return window.GridManagerPreferenceStore;
+  }
+  if (GridManagerApiPreferenceStore.isEnabled(context)) {
+    return GridManagerApiPreferenceStore;
   }
   return GridManagerLocalPreferenceStore;
 }
 
-function createGridManager(gridApi, gridId) {
+function createGridManager(gridApi, gridId, configOverrides = {}) {
+  const runtimeConfig = resolveGridPreferenceRuntimeConfig(gridId, configOverrides);
   return {
     gridApi: gridApi,
     gridId: gridId,
-    apiConfig: {
-      baseUrl: '/api/v1/guidance-engine',
-      userId: 'user', // TODO: Replace with actual logged-in user ID
-      screenId: `id_${gridId}`
-    },
+    apiConfig: runtimeConfig,
 
     savedPreferences: {
       'default': {
@@ -94,7 +267,7 @@ function createGridManager(gridApi, gridId) {
     },
 
     getPreferenceStore() {
-      return resolveGridPreferenceStore();
+      return resolveGridPreferenceStore(this.getPreferenceStoreContext());
     },
 
     async init() {
@@ -177,10 +350,21 @@ function createGridManager(gridApi, gridId) {
     },
 
     async fetchPreferences() {
-      // Preference storage is adapter-backed. Default adapter uses localStorage until backend APIs are integrated.
       try {
         const store = this.getPreferenceStore();
-        const data = await store.list(this.getPreferenceStoreContext());
+        const context = this.getPreferenceStoreContext();
+        let data;
+
+        try {
+          data = await store.list(context);
+        } catch (storeError) {
+          if (store !== GridManagerLocalPreferenceStore) {
+            console.warn(`Failed to load preferences from ${store.mode || 'store'}. Falling back to localStorage.`, storeError);
+            data = await GridManagerLocalPreferenceStore.list(context);
+          } else {
+            throw storeError;
+          }
+        }
 
         if (Array.isArray(data) && data.length > 0) {
           const defaultPref = this.savedPreferences['default'];
@@ -193,7 +377,7 @@ function createGridManager(gridApi, gridId) {
               name: pref.preferenceName,
               preferenceId: pref.preferenceId,
               visibleColumns: pref.visibleColumns,
-              columnOrder: pref.visibleColumns,
+              columnOrder: pref.columnOrder || pref.visibleColumns,
               currentPreference: pref.currentPreference
             };
 
@@ -240,14 +424,30 @@ function createGridManager(gridApi, gridId) {
     },
 
     async savePreferenceToBackend(preferenceName, visibleColumns, setAsCurrent = true) {
-      // TODO: Replace adapter with backend store when grid preference API is ready.
       try {
         const store = this.getPreferenceStore();
-        const preference = await store.save(this.getPreferenceStoreContext(), {
-          preferenceName,
-          visibleColumns,
-          setAsCurrent
-        });
+        const context = this.getPreferenceStoreContext();
+        let preference;
+
+        try {
+          preference = await store.save(context, {
+            preferenceName,
+            visibleColumns,
+            setAsCurrent
+          });
+        } catch (storeError) {
+          if (store !== GridManagerLocalPreferenceStore) {
+            console.warn(`Failed to save preference to ${store.mode || 'store'}. Falling back to localStorage.`, storeError);
+            preference = await GridManagerLocalPreferenceStore.save(context, {
+              preferenceName,
+              visibleColumns,
+              setAsCurrent
+            });
+          } else {
+            throw storeError;
+          }
+        }
+
         console.log(`Preference saved to ${store.mode || 'store'}:`, preference);
         return preference;
       } catch (error) {
@@ -258,10 +458,24 @@ function createGridManager(gridApi, gridId) {
     },
 
     async setCurrentPreference(preferenceId) {
-      // TODO: Replace adapter with backend store when grid preference API is ready.
+      if (!preferenceId) return null;
+
       try {
         const store = this.getPreferenceStore();
-        const updatedPref = await store.setCurrent(this.getPreferenceStoreContext(), preferenceId);
+        const context = this.getPreferenceStoreContext();
+        let updatedPref;
+
+        try {
+          updatedPref = await store.setCurrent(context, preferenceId);
+        } catch (storeError) {
+          if (store !== GridManagerLocalPreferenceStore) {
+            console.warn(`Failed to set current preference in ${store.mode || 'store'}. Falling back to localStorage.`, storeError);
+            updatedPref = await GridManagerLocalPreferenceStore.setCurrent(context, preferenceId);
+          } else {
+            throw storeError;
+          }
+        }
+
         console.log(`Current preference updated in ${store.mode || 'store'}:`, updatedPref);
         return updatedPref;
       } catch (error) {
@@ -958,13 +1172,13 @@ const GridManager = {
   instances: {},
   currentInstance: null,
 
-  init(gridApi, gridId) {
+  init(gridApi, gridId, configOverrides = {}) {
     if (!gridId) {
       console.error('GridManager.init requires gridId parameter');
       return null;
     }
 
-    const instance = createGridManager(gridApi, gridId);
+    const instance = createGridManager(gridApi, gridId, configOverrides);
     this.instances[gridId] = instance;
     this.currentInstance = instance;
 

@@ -94,7 +94,7 @@ const KviRecommendationLogicPage = {
   kviApiBaseUrl: '',
 
   init() {
-    this.kviApiBaseUrl = (window.KVI_API_BASE_URL || '').replace(/\/$/, '');
+    this.kviApiBaseUrl = (window.API_BASE_URL || window.KVI_API_BASE_URL || '').replace(/\/$/, '');
     this.cacheDom();
     this.bindTabs();
     this.bindToolbarActions();
@@ -108,6 +108,7 @@ const KviRecommendationLogicPage = {
 
   cacheDom() {
     this.pageShell = document.querySelector('.kvi-page-shell');
+    this.contentCard = document.querySelector('.kvi-page .content-card');
     this.tabButtons = Array.from(document.querySelectorAll('.kvi-tab-btn[data-kvi-tab]'));
     this.tabPanels = Array.from(document.querySelectorAll('.kvi-tab-panel[data-kvi-panel]'));
   },
@@ -130,14 +131,8 @@ const KviRecommendationLogicPage = {
 
     scope.querySelectorAll('.gt-action-btn[data-action="add"]').forEach((addBtn) => {
       addBtn.addEventListener('click', () => {
-        const activeGrid = this.getActiveGrid();
-        if (!activeGrid?.api) return;
-        const row = this.activeTab === 'parameter'
-          ? this.buildParameterRows(1)[0]
-          : this.buildOutputRows(1)[0];
-        if (typeof activeGrid.api.applyTransaction === 'function') {
-          activeGrid.api.applyTransaction({ add: [row], addIndex: 0 });
-        }
+        const addUrl = window.KVI_ADD_PAGE_URL || '/manage-kvi-recommendation-logic-view-output-data/add';
+        window.location.assign(addUrl);
       });
     });
 
@@ -332,7 +327,7 @@ const KviRecommendationLogicPage = {
           params.api.setGridOption('datasource', datasource);
         },
         rowSelection: 'multiple',
-        suppressRowClickSelection: false,
+        suppressRowClickSelection: true,
         icons: {
           sortUnSort:
             '<span class="gt-sort-icon gt-sort-icon--none" aria-hidden="true"><svg viewBox="0 0 8 12" focusable="false"><path d="M4 1L7 4H1L4 1Z"></path><path d="M4 11L1 8H7L4 11Z"></path></svg></span>',

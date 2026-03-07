@@ -161,3 +161,81 @@ Use this to explain the architecture quickly to other devs.
 ### Quick one-line summary
 
 - Screen files declare "what this screen needs"; shared files implement "how grid pages behave."
+
+## 9) Add Screen + Bulk Upload parity contract
+
+Use this for any add screen that supports unfinished batch uploads + row correction.
+
+### Shared assets to always reuse
+
+- `src/main/resources/static/js/bulk-upload-modal.js`
+- `src/main/resources/static/js/bulk-upload-flow.js`
+- `src/main/resources/static/css/bulk-upload-modal.css`
+- `src/main/resources/static/css/bulk-upload-flow.css`
+
+Do not copy/paste bulk upload engine code into each screen JS.
+
+### Required UI hooks in screen template
+
+- Batch card wrapper:
+  - `bulk-upload-batch-section`
+- Batch info row/icon/text:
+  - `bulk-upload-batch-info-row`
+  - `bulk-upload-batch-info-icon`
+  - `bulk-upload-batch-info-text`
+- Collapse button:
+  - `id="kviBatchCollapseBtn"` (or screen-specific id)
+  - class includes `bulk-upload-batch-collapse-btn`
+- Batch columns/list containers:
+  - `bulk-upload-batch-columns`
+  - `bulk-upload-batch-list`
+
+### Grid visual parity rules (mandatory)
+
+- Use same AG Grid icon config for sort states across all add/list screens:
+  - `sortUnSort`, `sortAscending`, `sortDescending` SVGs must match.
+- Keep default colDef parity:
+  - `sortable: true`
+  - `unSortIcon: true`
+  - `wrapHeaderText: true`
+  - `autoHeaderHeight: true`
+- Keep row/header density and typography aligned with shared `grid.css`.
+
+### Upload and batch behavior contract
+
+1. Clicking `Bulk Upload` opens modal only (no batch creation).
+2. Clicking modal `Upload` creates a batch and starts import.
+3. Uploaded rows must not auto-load in lower grid.
+4. User clicks batch number to load rows.
+5. Submit is selection-based (selected rows only).
+6. Remaining/error rows stay in the batch for later correction.
+7. Returning to page should reload unfinished batches from API by `screenCode` + user/context.
+
+### Paste behavior contract
+
+- Enable grid copy/paste via AG Grid clipboard pipeline.
+- Default operational limits:
+  - `maxPasteRows = 5000`
+  - `maxPasteCols = 10`
+  - `maxPasteCells = 50000`
+- Show clear toast on limit breach and block oversized paste.
+
+### Backend contract expectations for all screens
+
+- `GET /api/v1/bulk-upload/batches?screenCode=...`
+- `GET /api/v1/bulk-upload/batches/{batchId}/rows?screenCode=...&view=all|success|error`
+- `POST /api/v1/bulk-upload/batches` (create batch)
+- `POST /api/v1/bulk-upload/batches/{batchId}/file` or signed URL upload
+- `POST /api/v1/bulk-upload/batches/{batchId}/import/start?screenCode=...`
+- `DELETE /api/v1/bulk-upload/batches/{batchId}?screenCode=...`
+- Screen submit API for selected rows (contract per domain)
+
+### New add screen checklist
+
+- Import shared bulk-upload JS/CSS assets.
+- Provide screen mapping config only:
+  - `screenCode`
+  - row normalization
+  - row validation rules
+  - submit payload mapping
+- Keep screen CSS for local overrides only; never re-implement shared batch card styles.

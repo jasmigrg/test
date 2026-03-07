@@ -10,16 +10,28 @@
   <link rel="stylesheet" href="${ctx}/css/grid-manager.css">
   <link rel="stylesheet" href="${ctx}/css/grid-page.css">
   <link rel="stylesheet" href="${ctx}/css/action-toolbar.css">
+  <link rel="stylesheet" href="${ctx}/css/page-toast.css">
   <link rel="stylesheet" href="${ctx}/css/manage-kvi-recommendation-logic.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/styles/ag-grid.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/styles/ag-theme-alpine.css">
 
+  <script>
+    window.API_BASE_URL = window.API_BASE_URL || '${(apiBaseUrl!'')?js_string}';
+    window.GRID_PREF_TEST_USER_ID = window.GRID_PREF_TEST_USER_ID || '${(userId!'defaultUser')?js_string}';
+    window.KVI_ADD_PAGE_URL = window.KVI_ADD_PAGE_URL || '${ctx}/manage-kvi-recommendation-logic-view-output-data/add';
+    window.GRID_PREF_SCREEN_ID_BY_GRID = Object.assign({}, window.GRID_PREF_SCREEN_ID_BY_GRID, {
+      kviParameterGrid: 'id_kvi_recommendation_logic_parameter',
+      kviOutputGrid: 'id_kvi_recommendation_logic_output'
+    });
+  </script>
+
   <script src="${ctx}/js/sidebar.js" defer></script>
   <script src="${ctx}/js/dynamic-grid.js" defer></script>
   <script src="${ctx}/js/grid-manager.js" defer></script>
   <script src="${ctx}/js/grid-toolbar.js" defer></script>
+  <script src="${ctx}/js/page-toast.js" defer></script>
   <script src="${ctx}/js/manage-kvi-recommendation-logic.js" defer></script>
 
   <script src="https://cdn.jsdelivr.net/npm/ag-grid-community@31.0.1/dist/ag-grid-community.min.js"></script>
