@@ -227,7 +227,7 @@ const KviRecommendationLogicPage = {
       {
         gridApi: activeGrid.api,
         gridElement: activeGrid.element,
-        densityClassPrefix: 'kvi-density',
+        densityClassPrefix: 'grid-density',
         densityButtonSelector: `${this.toolbarScope} .gt-view-btn[data-density]`
       },
       mode || this.getSelectedDensityMode()
@@ -525,6 +525,56 @@ const KviRecommendationLogicPage = {
     return this.formatIsoDate(value);
   },
 
+  toApiDate(value) {
+    if (!value) return value;
+    const trimmed = String(value).trim();
+    const us = trimmed.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (us) {
+      const month = us[1].padStart(2, '0');
+      const day = us[2].padStart(2, '0');
+      return `${us[3]}-${month}-${day}`;
+    }
+    return trimmed;
+  },
+
+  parseInlineFilterExpression(rawValue, defaultType) {
+    const raw = String(rawValue ?? '').trim();
+    if (!raw) return { value: '', type: defaultType || 'contains' };
+
+    const operators = ['!=', '<>', '>=', '<=', '>', '<', '='];
+    const token = operators.find((op) => raw.startsWith(op));
+    if (!token) {
+      return { value: raw, type: defaultType || 'contains' };
+    }
+
+    const value = raw.slice(token.length).trim();
+    let type = defaultType || 'contains';
+    if (token === '=') type = 'equals';
+    else if (token === '>' || token === '>=') type = 'greaterThan';
+    else if (token === '<' || token === '<=') type = 'lessThan';
+    else if (token === '!=' || token === '<>') type = 'notEqual';
+
+    return { value, type };
+  },
+
+  mapOperatorToApi(operator, field) {
+    const op = String(operator || '').trim();
+    if (!op) return null;
+
+    if (op === 'equals') return 'eq';
+    if (op === 'greaterThan' || op === 'greaterThanOrEqual') return 'gt';
+    if (op === 'lessThan' || op === 'lessThanOrEqual') return 'ls';
+    if (op === 'contains') return 'like';
+    if (op === 'startsWith' || op === 'endsWith') return 'like';
+    if (op === 'notEqual') return 'eq';
+    if (op === 'blank' || op === 'notBlank') return null;
+
+    // Backend contract for KVI output supports eq/gt/ls/like.
+    // Fall back by field type when AG Grid sends unknown operator names.
+    if (field === 'effective_date' || field === 'termination_date') return 'eq';
+    return 'like';
+  },
+
   transformParameterRow(row) {
     if (!row || typeof row !== 'object') return row;
     return {
@@ -566,11 +616,21 @@ const KviRecommendationLogicPage = {
         if (params.filterModel) {
           Object.keys(params.filterModel).forEach((field) => {
             const filter = params.filterModel[field];
-            if (!filter || filter.filter === undefined || filter.filter === null || filter.filter === '') return;
             const filterField = (tabConfig.sortFieldMap && tabConfig.sortFieldMap[field]) || field;
-            urlParams.append(filterField, filter.filter);
-            if (filter.type) {
-              urlParams.append(`${filterField}_op`, filter.type);
+            const sourceValue = filter?.rawInput ?? filter?.filter ?? filter?.dateFrom;
+            if (sourceValue === undefined || sourceValue === null || String(sourceValue).trim() === '') return;
+
+            const parsed = this.parseInlineFilterExpression(sourceValue, filter?.type);
+            if (!parsed.value) return;
+
+            const finalValue = (filterField === 'effective_date' || filterField === 'termination_date')
+              ? this.toApiDate(parsed.value)
+              : parsed.value;
+            const apiOperator = this.mapOperatorToApi(parsed.type, filterField);
+
+            urlParams.append(filterField, finalValue);
+            if (apiOperator) {
+              urlParams.append(`${filterField}_op`, apiOperator);
             }
           });
         }
