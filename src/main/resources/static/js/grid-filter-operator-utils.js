@@ -76,6 +76,7 @@
     for (const input of inputs) {
       const field = input.dataset.colId;
       const kind = (fieldTypeMap && fieldTypeMap[field]) || 'text';
+      const rawInput = String(input.value || '').trim();
       const parsed = parseOperatorExpression(input.value, kind, { toDateIso, isNumeric });
 
       if (parsed.empty) continue;
@@ -89,25 +90,29 @@
       if (parsed.type === 'blank' || parsed.type === 'notBlank') {
         model[field] = {
           filterType: kind === 'number' ? 'number' : (kind === 'date' ? 'date' : 'text'),
-          type: parsed.type
+          type: parsed.type,
+          rawInput
         };
       } else if (kind === 'date') {
         model[field] = {
           filterType: 'date',
           type: parsed.type,
-          dateFrom: parsed.dateFrom
+          dateFrom: parsed.dateFrom,
+          rawInput
         };
       } else if (kind === 'number') {
         model[field] = {
           filterType: 'number',
           type: parsed.type,
-          filter: parsed.filter
+          filter: parsed.filter,
+          rawInput
         };
       } else {
         model[field] = {
           filterType: 'text',
           type: parsed.type,
-          filter: parsed.filter
+          filter: parsed.filter,
+          rawInput
         };
       }
     }

@@ -82,6 +82,7 @@ const KviRecommendationLogicAddPage = {
   bulkFlow: null,
   batchRows: [],
   gridElement: null,
+  detachCommunityPaste: null,
   bulkUploadModal: null,
   uploadedRows: [],
   selectedBatchId: null,
@@ -106,10 +107,10 @@ const KviRecommendationLogicAddPage = {
   cacheBulkUploadDom() {
     this.uploadStatusRow = document.getElementById('kviUploadStatusRow');
     this.uploadStatusInputs = Array.from(document.querySelectorAll('input[name="kviUploadStatus"]'));
-    this.batchSection = document.querySelector('.kvi-batch-section');
-    this.batchCollapseBtn = document.getElementById('kviBatchCollapseBtn');
-    this.batchInfoText = this.batchSection?.querySelector('.kvi-batch-info-text') || null;
-    this.batchTableBody = document.getElementById('kviBatchTableBody');
+    this.batchSection = document.querySelector('.bulk-upload-batch-section');
+    this.batchCollapseBtn = document.getElementById('bulkUploadBatchCollapseBtn');
+    this.batchInfoText = this.batchSection?.querySelector('.bulk-upload-batch-info-text') || null;
+    this.batchTableBody = document.getElementById('bulkUploadBatchTableBody');
     if (this.uploadStatusRow) this.uploadStatusRow.hidden = true;
   },
 
@@ -184,26 +185,53 @@ const KviRecommendationLogicAddPage = {
     ];
   },
 
-  processClipboardData(rows) {
-    if (!Array.isArray(rows) || rows.length === 0) return rows;
-    const rowCount = rows.length;
-    const colCount = Array.isArray(rows[0]) ? rows[0].length : 0;
-    const totalCells = rowCount * colCount;
+  appendBlankRows(count) {
+    if (!this.gridApi || !Number.isInteger(count) || count <= 0) return;
+    const rows = Array.from({ length: count }, () => ({
+      effectiveDate: '',
+      terminationDate: '',
+      prcaMinThreshold: '',
+      dedupMethod: '',
+      uploadStatus: '',
+      uploadErrors: []
+    }));
+    this.gridApi.applyTransaction({ add: rows });
+  },
 
-    if (rowCount > this.maxPasteRows) {
-      this.showInfo(`Paste limit is ${this.maxPasteRows} rows at a time.`, 'error');
-      return [];
+  ensureRowCapacityForPaste(rowCountToPaste, startRowIndex = null) {
+    if (!this.gridApi || rowCountToPaste <= 0) return;
+    const focused = this.gridApi.getFocusedCell?.();
+    const resolvedStartRowIndex = Number.isInteger(startRowIndex)
+      ? startRowIndex
+      : (Number.isInteger(focused?.rowIndex) ? focused.rowIndex : 0);
+    const requiredRows = resolvedStartRowIndex + rowCountToPaste;
+    const currentRows = typeof this.gridApi.getDisplayedRowCount === 'function'
+      ? this.gridApi.getDisplayedRowCount()
+      : this.getGridRows().length;
+    const missingRows = requiredRows - currentRows;
+    if (missingRows > 0) {
+      this.appendBlankRows(missingRows);
     }
-    if (colCount > this.maxPasteCols) {
-      this.showInfo(`Paste limit is ${this.maxPasteCols} columns at a time.`, 'error');
-      return [];
-    }
-    if (totalCells > this.maxPasteCells) {
-      this.showInfo(`Paste limit is ${this.maxPasteCells} cells at a time.`, 'error');
-      return [];
+  },
+
+  syncUploadedRowsFromGrid(forceRebuild = false) {
+    if (forceRebuild || this.uploadedRows.length === 0) {
+      const rows = this.getGridRows()
+        .map((row) => this.normalizeRow(row))
+        .filter((row) => !this.isRowEmpty(row))
+        .map((row) => {
+          const validation = this.validateRow(row);
+          return {
+            ...row,
+            uploadStatus: validation.isValid ? 'success' : 'error',
+            uploadErrors: validation.errors
+          };
+        });
+      this.uploadedRows = rows;
     }
 
-    return rows;
+    if (this.uploadStatusRow) this.uploadStatusRow.hidden = this.uploadedRows.length === 0;
+    if (this.uploadFilter !== 'all') this.applyUploadFilter();
   },
 
   validationCellRules(field) {
@@ -231,12 +259,11 @@ const KviRecommendationLogicAddPage = {
         rowData: this.initialRows(),
         rowSelection: 'multiple',
         suppressRowClickSelection: true,
-        singleClickEdit: true,
+        singleClickEdit: false,
         enableRangeSelection: true,
         suppressClipboardPaste: false,
         copyHeadersToClipboard: false,
         stopEditingWhenCellsLoseFocus: true,
-        processDataFromClipboard: (params) => this.processClipboardData(params?.data || []),
         onCellValueChanged: (event) => this.onCellValueChanged(event),
         components: {
           kviInlineSaveCellEditor: KviInlineSaveCellEditor
@@ -301,6 +328,12 @@ const KviRecommendationLogicAddPage = {
           headerName: 'PRCA Min Threshold',
           minWidth: 200,
           filter: 'agNumberColumnFilter',
+          filterValueGetter: (params) => {
+            const raw = String(params?.data?.prcaMinThreshold ?? '').replace(/,/g, '').trim();
+            if (!raw) return null;
+            const numeric = Number(raw);
+            return Number.isFinite(numeric) ? numeric : null;
+          },
           cellEditorSelector: (params) => (this.isErrorCell(params, 'prcaMinThreshold')
             ? { component: 'kviInlineSaveCellEditor', params: { pageRef: this } }
             : undefined),
@@ -320,6 +353,25 @@ const KviRecommendationLogicAddPage = {
 
     this.gridElement = document.getElementById('kviRecommendationParameterAddGrid');
     if (!this.gridApi) return;
+    if (typeof this.detachCommunityPaste === 'function') {
+      this.detachCommunityPaste();
+      this.detachCommunityPaste = null;
+    }
+    if (window.CommunityGridPaste?.attach) {
+      this.detachCommunityPaste = window.CommunityGridPaste.attach({
+        gridElement: this.gridElement,
+        gridApi: this.gridApi,
+        editableFieldOrder: ['effectiveDate', 'terminationDate', 'prcaMinThreshold', 'dedupMethod'],
+        maxRows: this.maxPasteRows,
+        maxCols: this.maxPasteCols,
+        maxCells: this.maxPasteCells,
+        showInfo: (message, type) => this.showInfo(message, type),
+        ensureRowCapacity: (rowCount, startRowIndex) => this.ensureRowCapacityForPaste(rowCount, startRowIndex),
+        normalizeRow: (row) => this.normalizeRow(row),
+        validateRow: (row) => this.validateRow(row),
+        onApplied: () => this.syncUploadedRowsFromGrid(true)
+      });
+    }
 
     window.gridApi = this.gridApi;
 
@@ -624,6 +676,7 @@ const KviRecommendationLogicAddPage = {
       input.addEventListener('change', () => {
         if (!input.checked) return;
         this.uploadFilter = input.value;
+        this.clearColumnFilters();
         this.applyUploadFilter();
       });
     });
@@ -633,16 +686,16 @@ const KviRecommendationLogicAddPage = {
     if (!window.BulkUploadModal || typeof window.BulkUploadModal.create !== 'function') return;
 
     this.bulkUploadModal = window.BulkUploadModal.create({
-      modalId: 'kviBulkUploadModal',
-      dropzoneId: 'kviBulkUploadDropzone',
-      inputId: 'kviBulkUploadInput',
-      browseBtnId: 'kviBulkUploadBrowseBtn',
-      nextBtnId: 'kviBulkUploadNextBtn',
-      errorId: 'kviBulkUploadError',
-      fileCardId: 'kviBulkUploadFileCard',
-      fileNameId: 'kviBulkUploadSelectedFile',
-      fileSizeId: 'kviBulkUploadFileSize',
-      fileRemoveBtnId: 'kviBulkUploadFileRemoveBtn',
+      modalId: 'bulkUploadModal',
+      dropzoneId: 'bulkUploadDropzone',
+      inputId: 'bulkUploadInput',
+      browseBtnId: 'bulkUploadBrowseBtn',
+      nextBtnId: 'bulkUploadNextBtn',
+      errorId: 'bulkUploadError',
+      fileCardId: 'bulkUploadFileCard',
+      fileNameId: 'bulkUploadSelectedFile',
+      fileSizeId: 'bulkUploadFileSize',
+      fileRemoveBtnId: 'bulkUploadFileRemoveBtn',
       initialNextLabel: 'Next',
       uploadLabel: 'Upload',
       validateFile: (file) => /\.csv$/i.test(file.name) || file.type === 'text/csv',
@@ -709,8 +762,16 @@ const KviRecommendationLogicAddPage = {
       dedupMethod: 'text'
     };
 
+    const floatingInputs = this.gridElement
+      ? Array.from(this.gridElement.querySelectorAll('.mfi-floating-filter-input[data-col-id]'))
+      : [];
+    const rawInputByField = new Map();
+    floatingInputs.forEach((input) => {
+      rawInputByField.set(input.dataset.colId, input.value);
+    });
+
     if (window.GridFilterOperatorUtils?.applyFloatingFilters) {
-      window.GridFilterOperatorUtils.applyFloatingFilters({
+      const applied = window.GridFilterOperatorUtils.applyFloatingFilters({
         gridApi: this.gridApi,
         gridElement: this.gridElement,
         fieldTypeMap: kindByField,
@@ -718,6 +779,15 @@ const KviRecommendationLogicAddPage = {
         isNumeric: (value) => this.isValidThreshold(value),
         onValidationError: (field, reason) => this.showInfo(`${field}: ${reason}`, 'error')
       });
+
+      if (applied) {
+        requestAnimationFrame(() => {
+          floatingInputs.forEach((input) => {
+            const raw = rawInputByField.get(input.dataset.colId);
+            if (raw != null) input.value = raw;
+          });
+        });
+      }
       return;
     }
 
@@ -779,6 +849,7 @@ const KviRecommendationLogicAddPage = {
     if (this.gridApi?.refreshCells) {
       this.gridApi.refreshCells({ rowNodes: [rowNode], force: true });
     }
+    this.syncUploadedRowsFromGrid();
   },
 
   saveCellFromEditor(rowNode, field, nextValue) {
@@ -817,6 +888,7 @@ const KviRecommendationLogicAddPage = {
       if (this.uploadStatusRow) this.uploadStatusRow.hidden = false;
       this.applyUploadFilter();
     }
+    this.syncUploadedRowsFromGrid();
 
     this.showInfo('Cell saved locally.', 'success');
     return { ok: true, value };
@@ -978,6 +1050,25 @@ const KviRecommendationLogicAddPage = {
       : this.uploadedRows.filter((row) => row.uploadStatus === this.uploadFilter);
 
     this.gridApi.setGridOption('rowData', filteredRows);
+  },
+
+  clearColumnFilters() {
+    if (!this.gridApi) return;
+
+    if (typeof this.gridApi.setFilterModel === 'function') {
+      this.gridApi.setFilterModel(null);
+    }
+
+    if (typeof this.gridApi.onFilterChanged === 'function') {
+      this.gridApi.onFilterChanged();
+    }
+
+    if (this.gridElement) {
+      const inputs = this.gridElement.querySelectorAll('.mfi-floating-filter-input');
+      inputs.forEach((input) => {
+        input.value = '';
+      });
+    }
   },
 
   deleteSelectedRows() {

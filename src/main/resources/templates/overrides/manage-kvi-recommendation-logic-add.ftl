@@ -32,6 +32,7 @@
 
   <script src="${ctx}/js/sidebar.js" defer></script>
   <script src="${ctx}/js/dynamic-grid.js" defer></script>
+  <script src="${ctx}/js/community-grid-paste.js" defer></script>
   <script src="${ctx}/js/grid-manager.js" defer></script>
   <script src="${ctx}/js/grid-toolbar.js" defer></script>
   <script src="${ctx}/js/page-toast.js" defer></script>
@@ -80,31 +81,31 @@
           <@gridViewActions.render defaultDensity="compact" showDownload=false />
         </@actionToolbar.render>
 
-        <section class="kvi-batch-section bulk-upload-batch-section" aria-label="KVI upload batches">
-          <div class="kvi-batch-info-row bulk-upload-batch-info-row">
-            <div class="kvi-batch-info-left bulk-upload-batch-info-left">
-              <span class="kvi-batch-info-icon bulk-upload-batch-info-icon" aria-hidden="true">i</span>
-              <span class="kvi-batch-info-text bulk-upload-batch-info-text">You Have [X] Unfinished Uploads.</span>
+        <section class="bulk-upload-batch-section" aria-label="KVI upload batches">
+          <div class="bulk-upload-batch-info-row">
+            <div class="bulk-upload-batch-info-left">
+              <span class="bulk-upload-batch-info-icon" aria-hidden="true">i</span>
+              <span class="bulk-upload-batch-info-text">You Have [X] Unfinished Uploads.</span>
             </div>
-            <button type="button" class="kvi-batch-collapse-btn bulk-upload-batch-collapse-btn" id="kviBatchCollapseBtn" aria-label="Collapse unfinished uploads" aria-expanded="true">⌃</button>
+            <button type="button" class="bulk-upload-batch-collapse-btn" id="bulkUploadBatchCollapseBtn" aria-label="Collapse unfinished uploads" aria-expanded="true">⌃</button>
           </div>
-          <div id="kviBatchGrid" class="kvi-batch-grid bulk-upload-batch-grid">
-            <div class="kvi-batch-columns bulk-upload-batch-columns" aria-hidden="true">
-              <span class="kvi-batch-col bulk-upload-batch-col">Batch Number</span>
-              <span class="kvi-batch-col bulk-upload-batch-col">Batch Status</span>
-              <span class="kvi-batch-col bulk-upload-batch-col">Records Count</span>
-              <span class="kvi-batch-col bulk-upload-batch-col">Error Count</span>
-              <span class="kvi-batch-col bulk-upload-batch-col">Created By</span>
-              <span class="kvi-batch-col bulk-upload-batch-col">Price Rule Level</span>
-              <span class="kvi-batch-col bulk-upload-batch-col">Start Date</span>
-              <span class="kvi-batch-col bulk-upload-batch-col">End Date</span>
-              <span class="kvi-batch-col bulk-upload-batch-col">Program ID</span>
-              <span class="kvi-batch-col bulk-upload-batch-col">User ID</span>
-              <span class="kvi-batch-col bulk-upload-batch-col">Workstation ID</span>
-              <span class="kvi-batch-col bulk-upload-batch-col">Date Updated</span>
-              <span class="kvi-batch-col bulk-upload-batch-col">Delete</span>
+          <div id="bulkUploadBatchGrid" class="bulk-upload-batch-grid">
+            <div class="bulk-upload-batch-columns" aria-hidden="true">
+              <span class="bulk-upload-batch-col">Batch Number</span>
+              <span class="bulk-upload-batch-col">Batch Status</span>
+              <span class="bulk-upload-batch-col">Records Count</span>
+              <span class="bulk-upload-batch-col">Error Count</span>
+              <span class="bulk-upload-batch-col">Created By</span>
+              <span class="bulk-upload-batch-col">Price Rule Level</span>
+              <span class="bulk-upload-batch-col">Start Date</span>
+              <span class="bulk-upload-batch-col">End Date</span>
+              <span class="bulk-upload-batch-col">Program ID</span>
+              <span class="bulk-upload-batch-col">User ID</span>
+              <span class="bulk-upload-batch-col">Workstation ID</span>
+              <span class="bulk-upload-batch-col">Date Updated</span>
+              <span class="bulk-upload-batch-col">Delete</span>
             </div>
-            <div id="kviBatchTableBody" class="kvi-batch-list bulk-upload-batch-list" role="list" aria-label="Unfinished upload batches"></div>
+            <div id="bulkUploadBatchTableBody" class="bulk-upload-batch-list" role="list" aria-label="Unfinished upload batches"></div>
           </div>
         </section>
 
@@ -134,40 +135,40 @@
     </main>
   </div>
 
-  <div class="kvi-bulk-upload-modal" id="kviBulkUploadModal" hidden aria-hidden="true">
-    <div class="kvi-bulk-upload-backdrop" data-bulk-close></div>
-    <section class="kvi-bulk-upload-dialog" role="dialog" aria-modal="true" aria-labelledby="kviBulkUploadTitle">
-      <header class="kvi-bulk-upload-header">
+  <div class="bulk-upload-modal" id="bulkUploadModal" hidden aria-hidden="true">
+    <div class="bulk-upload-backdrop" data-bulk-close></div>
+    <section class="bulk-upload-dialog" role="dialog" aria-modal="true" aria-labelledby="bulkUploadTitle">
+      <header class="bulk-upload-header">
         <div>
-          <h2 id="kviBulkUploadTitle">Bulk Upload</h2>
+          <h2 id="bulkUploadTitle">Bulk Upload</h2>
           <p>Add your document here.</p>
         </div>
-        <button type="button" class="kvi-bulk-upload-close" aria-label="Close bulk upload" data-bulk-close>×</button>
+        <button type="button" class="bulk-upload-close" aria-label="Close bulk upload" data-bulk-close>×</button>
       </header>
 
-      <input id="kviBulkUploadInput" type="file" accept=".csv,text/csv" hidden />
+      <input id="bulkUploadInput" type="file" accept=".csv,text/csv" hidden />
 
-      <div class="kvi-bulk-upload-dropzone" id="kviBulkUploadDropzone">
-        <div class="kvi-bulk-upload-icon" aria-hidden="true">⬆</div>
-        <p class="kvi-bulk-upload-main-text">Drag your file(s) to start uploading</p>
-        <p class="kvi-bulk-upload-or">OR</p>
-        <button type="button" class="kvi-bulk-upload-browse-btn" id="kviBulkUploadBrowseBtn">Browse files</button>
+      <div class="bulk-upload-dropzone" id="bulkUploadDropzone">
+        <div class="bulk-upload-icon" aria-hidden="true">⬆</div>
+        <p class="bulk-upload-main-text">Drag your file(s) to start uploading</p>
+        <p class="bulk-upload-or">OR</p>
+        <button type="button" class="bulk-upload-browse-btn" id="bulkUploadBrowseBtn">Browse files</button>
       </div>
 
-      <p class="kvi-bulk-upload-help">Only support .csv files</p>
-      <p class="kvi-bulk-upload-error" id="kviBulkUploadError" hidden>Please upload a valid .csv file.</p>
-      <div class="kvi-bulk-upload-file-card" id="kviBulkUploadFileCard" hidden>
-        <div class="kvi-bulk-upload-file-icon" aria-hidden="true">CSV</div>
-        <div class="kvi-bulk-upload-file-meta">
-          <p class="kvi-bulk-upload-file-name" id="kviBulkUploadSelectedFile"></p>
-          <p class="kvi-bulk-upload-file-size" id="kviBulkUploadFileSize"></p>
+      <p class="bulk-upload-help">Only support .csv files</p>
+      <p class="bulk-upload-error" id="bulkUploadError" hidden>Please upload a valid .csv file.</p>
+      <div class="bulk-upload-file-card" id="bulkUploadFileCard" hidden>
+        <div class="bulk-upload-file-icon" aria-hidden="true">CSV</div>
+        <div class="bulk-upload-file-meta">
+          <p class="bulk-upload-file-name" id="bulkUploadSelectedFile"></p>
+          <p class="bulk-upload-file-size" id="bulkUploadFileSize"></p>
         </div>
-        <button type="button" class="kvi-bulk-upload-file-remove" id="kviBulkUploadFileRemoveBtn" aria-label="Remove selected file">×</button>
+        <button type="button" class="bulk-upload-file-remove" id="bulkUploadFileRemoveBtn" aria-label="Remove selected file">×</button>
       </div>
 
-      <footer class="kvi-bulk-upload-footer">
-        <button type="button" class="kvi-bulk-upload-cancel-btn" data-bulk-close>Cancel</button>
-        <button type="button" class="kvi-bulk-upload-next-btn" id="kviBulkUploadNextBtn">Next</button>
+      <footer class="bulk-upload-footer">
+        <button type="button" class="bulk-upload-cancel-btn" data-bulk-close>Cancel</button>
+        <button type="button" class="bulk-upload-next-btn" id="bulkUploadNextBtn">Next</button>
       </footer>
     </section>
   </div>

@@ -61,6 +61,12 @@
       return `${String(slashMatch[1]).padStart(2, '0')}/${String(slashMatch[2]).padStart(2, '0')}/${slashMatch[3]}`;
     }
 
+    const shortYearMatch = raw.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2})$/);
+    if (shortYearMatch) {
+      const year = 2000 + Number(shortYearMatch[3]);
+      return `${String(shortYearMatch[1]).padStart(2, '0')}/${String(shortYearMatch[2]).padStart(2, '0')}/${year}`;
+    }
+
     return raw;
   }
 

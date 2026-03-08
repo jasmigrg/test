@@ -36,7 +36,12 @@ class ManualApplyFloatingFilter {
   }
 
   onParentModelChanged(parentModel) {
-    const next = parentModel && parentModel.filter != null ? String(parentModel.filter) : '';
+    let next = '';
+    if (parentModel && parentModel.rawInput != null) {
+      next = String(parentModel.rawInput);
+    } else if (parentModel && parentModel.filter != null) {
+      next = String(parentModel.filter);
+    }
     this.currentValue = next;
     if (this.input && this.input.value !== next) {
       this.input.value = next;
@@ -236,7 +241,7 @@ const DynamicGrid = {
       columnDefs: columnDefs,
       pagination: true,
       paginationPageSize: config.pageSize || 10,
-      paginationPageSizeSelector: config.pageSizeSelector || [10, 20, 50, 100],
+      paginationPageSizeSelector: config.pageSizeSelector || [10, 20, 50, 100, 200],
       enableCellTextSelection: true,
       ensureDomOrder: true,
       components: config.manualFilterApply
@@ -398,10 +403,14 @@ const DynamicGrid = {
         // Format 1: pageNum, pageLimit, sort, direction (standard)
         // Format 2: page, size, sortBy, sortDirection (Spring default)
         const useSpringFormat = config.useSpringPagination || false;
+        const springPageParam = config.springPageParam || 'page';
+        const springPageSizeParam = config.springPageSizeParam || 'size';
+        const springSortByParam = config.springSortByParam || 'sortBy';
+        const springSortDirectionParam = config.springSortDirectionParam || 'sortDirection';
 
         if (useSpringFormat) {
-          urlParams.append('page', pageNum);
-          urlParams.append('size', pageSize);
+          urlParams.append(springPageParam, pageNum);
+          urlParams.append(springPageSizeParam, pageSize);
         } else {
           urlParams.append('pageNum', pageNum);
           urlParams.append('pageLimit', pageSize);
@@ -409,11 +418,13 @@ const DynamicGrid = {
 
         if (params.sortModel && params.sortModel.length > 0) {
           const sortModel = params.sortModel[0];
+          const sortFieldMap = config.sortFieldMap || {};
+          const sortField = sortFieldMap[sortModel.colId] || sortModel.colId;
           if (useSpringFormat) {
-            urlParams.append('sortBy', sortModel.colId);
-            urlParams.append('sortDirection', sortModel.sort.toUpperCase());
+            urlParams.append(springSortByParam, sortField);
+            urlParams.append(springSortDirectionParam, sortModel.sort.toUpperCase());
           } else {
-            urlParams.append('sort', sortModel.colId);
+            urlParams.append('sort', sortField);
             urlParams.append('direction', sortModel.sort.toUpperCase());
           }
         }
@@ -479,10 +490,28 @@ const DynamicGrid = {
             let rows = [];
             let lastRow = -1;
 
-            // Support both response formats
+            // Support multiple response formats
             // Format 1: {data: [...], total: 123} (standard)
             // Format 2: {content: [...], totalElements: 123} (Spring Page)
-            if (data && data.data) {
+            // Format 3: {status: 'SUCCESS', data: {content: [...], totalElements: 123}, errors: []}
+            if (data && data.data && data.data.content) {
+              // Nested Spring page inside wrapper data object
+              rows = Array.isArray(data.data.content) ? data.data.content : [data.data.content];
+
+              if (config.dataTransformer) {
+                rows = rows.map(config.dataTransformer);
+              }
+
+              if (config.columns.some(col => col.dataMapping)) {
+                rows = rows.map(row => this.mapRowData(row, config.columns));
+              }
+
+              if (data.data.totalElements !== undefined) {
+                lastRow = data.data.totalElements;
+              } else if (rows.length < pageSize) {
+                lastRow = params.startRow + rows.length;
+              }
+            } else if (data && data.data) {
               // Standard format
               rows = Array.isArray(data.data) ? data.data : [data.data];
 

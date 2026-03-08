@@ -1,128 +1,133 @@
-.kvi-bulk-upload-modal[hidden] {
+.bulk-upload-modal[hidden] {
   display: none;
 }
 
-.kvi-bulk-upload-modal {
+.bulk-upload-modal {
   position: fixed;
   inset: 0;
   z-index: 1400;
+  display: grid;
+  place-items: center;
+  padding: 20px;
 }
 
-.kvi-bulk-upload-backdrop {
+.bulk-upload-backdrop {
   position: absolute;
   inset: 0;
   background: rgba(12, 20, 32, 0.28);
 }
 
-.kvi-bulk-upload-dialog {
+.bulk-upload-dialog {
   position: relative;
-  width: min(96vw, 520px);
-  margin: 120px auto;
-  background: #fff;
+  width: min(92vw, 410px) !important;
+  margin: 0 !important;
+  background: #f3f4f6;
   border: 1px solid #d8e1eb;
   border-radius: 14px;
-  padding: 20px 20px 16px;
+  padding: 12px 12px 10px !important;
   box-shadow: 0 14px 34px rgba(16, 24, 40, 0.16);
 }
 
-.kvi-bulk-upload-header {
+.bulk-upload-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
   gap: 12px;
 }
 
-.kvi-bulk-upload-header h2 {
+.bulk-upload-header h2 {
   margin: 0;
-  font-size: 32px;
+  font-size: 18px !important;
   line-height: 1.1;
   color: #202733;
 }
 
-.kvi-bulk-upload-header p {
+.bulk-upload-header p {
   margin: 4px 0 0;
-  font-size: 13px;
+  font-size: 12px !important;
   color: #5f6f81;
 }
 
-.kvi-bulk-upload-close {
+.bulk-upload-close {
   border: none;
   background: transparent;
   color: #202733;
-  font-size: 36px;
+  font-size: 24px !important;
   line-height: 1;
   cursor: pointer;
   padding: 0;
 }
 
-.kvi-bulk-upload-dropzone {
-  margin-top: 14px;
+.bulk-upload-dropzone {
+  margin-top: 10px;
   border: 2px dashed #7bcbd6;
   border-radius: 10px;
-  min-height: 198px;
+  min-height: 118px !important;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   text-align: center;
-  padding: 14px;
-  background: #fafdfd;
+  padding: 8px !important;
+  background: #fff;
   transition: border-color 0.15s ease, background-color 0.15s ease;
 }
 
-.kvi-bulk-upload-dropzone.is-dragover {
+.bulk-upload-dropzone.is-dragover {
   border-color: #0d8b99;
   background: #f0fbfd;
 }
 
-.kvi-bulk-upload-icon {
-  width: 50px;
-  height: 50px;
+.bulk-upload-icon {
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
   background: linear-gradient(160deg, #0d8b99, #5cbac7);
   color: #fff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
-  margin-bottom: 12px;
+  font-size: 16px;
+  margin-bottom: 6px;
 }
 
-.kvi-bulk-upload-main-text {
+.bulk-upload-main-text {
   margin: 0;
-  font-size: 22px;
+  font-size: 13px !important;
   color: #293241;
 }
 
-.kvi-bulk-upload-or {
-  margin: 7px 0;
+.bulk-upload-or {
+  margin: 6px 0;
+  font-size: 11px;
   color: #6b7280;
 }
 
-.kvi-bulk-upload-browse-btn {
+.bulk-upload-browse-btn {
   border: 1px solid #31a3b4;
   background: #fff;
   color: #17879a;
-  border-radius: 14px;
+  border-radius: 10px;
   height: 34px;
-  padding: 0 16px;
-  font-size: 15px;
+  min-width: 96px;
+  padding: 0 12px;
+  font-size: 13px;
   cursor: pointer;
 }
 
-.kvi-bulk-upload-help {
-  margin: 10px 0 0;
-  font-size: 16px;
+.bulk-upload-help {
+  margin: 8px 0 0;
+  font-size: 12px !important;
   color: #4b5563;
 }
 
-.kvi-bulk-upload-error {
+.bulk-upload-error {
   margin: 8px 0 0;
   font-size: 13px;
   color: #dc2626;
 }
 
-.kvi-bulk-upload-file-card {
+.bulk-upload-file-card {
   margin-top: 10px;
   border: 1px solid #e3e8ef;
   border-radius: 10px;
@@ -134,7 +139,7 @@
   padding: 8px 10px;
 }
 
-.kvi-bulk-upload-file-icon {
+.bulk-upload-file-icon {
   width: 40px;
   height: 40px;
   border-radius: 8px;
@@ -147,12 +152,12 @@
   font-weight: 700;
 }
 
-.kvi-bulk-upload-file-meta {
+.bulk-upload-file-meta {
   min-width: 0;
   flex: 1;
 }
 
-.kvi-bulk-upload-file-name {
+.bulk-upload-file-name {
   margin: 0;
   color: #1f2937;
   font-size: 14px;
@@ -162,13 +167,13 @@
   white-space: nowrap;
 }
 
-.kvi-bulk-upload-file-size {
+.bulk-upload-file-size {
   margin: 2px 0 0;
   color: #6b7280;
   font-size: 12px;
 }
 
-.kvi-bulk-upload-file-remove {
+.bulk-upload-file-remove {
   border: 1px solid #d2dae5;
   background: #fff;
   color: #6b7280;
@@ -181,37 +186,37 @@
   padding: 0;
 }
 
-.kvi-bulk-upload-footer {
-  margin-top: 14px;
+.bulk-upload-footer {
+  margin-top: 10px;
   display: flex;
   justify-content: flex-end;
   gap: 12px;
 }
 
-.kvi-bulk-upload-cancel-btn,
-.kvi-bulk-upload-next-btn {
+.bulk-upload-cancel-btn,
+.bulk-upload-next-btn {
   border-radius: 10px;
-  min-width: 74px;
-  height: 40px;
-  font-size: 19px;
+  min-width: 66px;
+  height: 34px;
+  font-size: 13px !important;
   font-weight: 400;
-  padding: 0 16px;
+  padding: 0 12px;
   cursor: pointer;
 }
 
-.kvi-bulk-upload-cancel-btn {
+.bulk-upload-cancel-btn {
   border: 1px solid #d5dbe5;
   background: #fff;
   color: #374151;
 }
 
-.kvi-bulk-upload-next-btn {
+.bulk-upload-next-btn {
   border: none;
   background: #0d8b99;
   color: #fff;
 }
 
-.kvi-bulk-upload-next-btn:disabled {
+.bulk-upload-next-btn:disabled {
   opacity: 0.55;
   cursor: not-allowed;
 }
